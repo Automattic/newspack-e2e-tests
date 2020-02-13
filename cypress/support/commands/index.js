@@ -12,7 +12,8 @@ Cypress.Commands.add("selectOption", (label, value, expected) => {
 Cypress.Commands.add("fillInput", (label, value) => {
   cy.contains(label)
     .siblings("input")
-    .type(value);
+    .type(value)
+    .should("have.value", value);
 });
 
 Cypress.Commands.add("assertURLIncludes", value => {
