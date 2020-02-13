@@ -1,0 +1,83 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: circleci/php:7.4.2-apache-node-browsers
+      - image: circleci/mysql:5.7
+        environment:
+          MYSQL_ROOT_PASSWORD: somewordpress
+          MYSQL_DATABASE: wordpress
+          MYSQL_USER: wordpress
+          MYSQL_PASSWORD: wordpress
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Waiting for MySQL to be ready
+          command: |
+            for i in `seq 1 20`;
+            do
+              nc -z 127.0.0.1 3306 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for MySQL && exit 1
+      - run:
+          name: Install mysql client
+          command: sudo apt-get update && sudo apt-get install default-mysql-client
+      - run:
+          # https://wordpress.stackexchange.com/a/338289
+          name: Install PHP extensions
+          command: sudo docker-php-ext-install mysqli
+      - run:
+          name: Install wp-cli
+          command: |
+            curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+            chmod +x wp-cli.phar
+            sudo mv wp-cli.phar /usr/local/bin/wp
+      - run:
+          name: Download WordPress
+          command: wp core download --allow-root
+      - run:
+          name: Configure WordPress
+          command: wp core config --allow-root --dbname=wordpress --dbuser=wordpress --dbhost=127.0.0.1 --dbpass=wordpress
+      - run:
+          name: Install WordPress
+          command: wp core install --allow-root --url=http://localhost:8000 --title=WordTest --admin_user=admin --admin_password=password --admin_email=foo@bar.com --skip-email
+      - run:
+          name: Install Newspack plugin
+          command: wp plugin install https://github.com/Automattic/newspack-plugin/releases/latest/download/newspack-plugin.zip --activate --allow-root
+      - run:
+          name: Launch server
+          command: wp server --port=8000 --allow-root
+          background: true
+      - run:
+          name: Waiting for server to be ready
+          command: |
+            for i in `seq 1 20`;
+            do
+              nc -z 127.0.0.1 8000 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for server && exit 1
+      - run:
+          name: Install node dependencies
+          command: npm ci
+      - run:
+          name: E2E Tests with Cypress
+          command: npm run test:ci
+      - store_artifacts:
+          path: artifacts
+      - store_artifacts:
+          path: cypress/snapshots/actual
+      - store_artifacts:
+          path: cypress/snapshots/diff
+
+workflows:
+  version: 2
+  all:
+    jobs:
+      - build
