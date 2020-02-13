@@ -7,7 +7,8 @@ Cypress.Commands.add(
   "compareVisualRegressionScreenshot",
   (element, screenshotName) => {
     if (Cypress.env("type")) {
-      cy.get("#newspack-setup-wizard").compareSnapshot("wizard-after-about");
+      Cypress.$("#wpadminbar").hide();
+      cy.get(element).compareSnapshot(screenshotName);
     }
   }
 );
