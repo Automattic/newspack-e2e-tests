@@ -1,6 +1,5 @@
 describe("Set up Newspack plugin", () => {
   it("Log in to admin", () => {
-    cy.visit("http://localhost:8000/wp-admin");
     cy.wpLogin();
   });
 
