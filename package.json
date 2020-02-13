@@ -1,0 +1,22 @@
+{
+  "name": "newspack-e2e-tests",
+  "version": "0.0.0",
+  "description": "E2E tests suite for the Newspack project",
+  "scripts": {
+    "test": "cypress open",
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/utomattic/newspack-e2e-tests.git"
+  },
+  "keywords": [],
+  "author": "Automattic",
+  "bugs": {
+    "url": "https://github.com/utomattic/newspack-e2e-tests/issues"
+  },
+  "homepage": "https://github.com/utomattic/newspack-e2e-tests#readme",
+  "dependencies": {
+    "cypress": "^4.0.1",
+    "cypress-visual-regression": "^1.0.5"
+  }
+}
