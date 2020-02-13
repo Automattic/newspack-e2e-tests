@@ -39,6 +39,12 @@ describe("Set up Newspack plugin", () => {
   it("Fill newsroom data", () => {
     cy.contains("Tell us about your Newsroom");
 
+    // wait until data loads - until then the UI is obscured
+    // (can be pretty slow onn CI)
+    cy.waitUntil(() => Cypress.$(".newspack-wizard__is-loading").length === 0, {
+      timeout: 20000
+    });
+
     cy.selectOption("Size of your newsroom", "4-10");
     cy.selectOption("Your publishing medium", "both", "Digital and Print");
     cy.selectOption("Size of your audience", "10000-100000");

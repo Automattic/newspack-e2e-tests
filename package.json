@@ -24,6 +24,7 @@
   "homepage": "https://github.com/utomattic/newspack-e2e-tests#readme",
   "dependencies": {
     "cypress": "^4.0.1",
-    "cypress-visual-regression": "^1.0.5"
+    "cypress-visual-regression": "^1.0.5",
+    "cypress-wait-until": "^1.6.1"
   }
 }
