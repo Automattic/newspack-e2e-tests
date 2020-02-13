@@ -29,6 +29,8 @@ To check for visual regressions, run `$ npm run test:visual:check`.
 
 The images are stored in `cypress/snapshots/base`. After a test run, the image diffs will be stored in `cypress/snapshots/diff` - in case of tests failing on visual check, inspect those for the regressions.
 
+The visual regression testing is set up to run in Electron browser in order to achieve same results locally and on CI (where Electron is the only available option).
+
 _Note that Cypress UI will disappear momentarily when taking a screenshot._
 
 ## Debugging
