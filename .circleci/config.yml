@@ -45,7 +45,7 @@ jobs:
           command: wp core config --allow-root --dbname=wordpress --dbuser=wordpress --dbhost=127.0.0.1 --dbpass=wordpress
       - run:
           name: Install WordPress
-          command: wp core install --allow-root --url=http://localhost:8000 --title=WordTest --admin_user=admin --admin_password=password --admin_email=foo@bar.com --skip-email
+          command: wp core install --allow-root --url=http://localhost:8000 --title=NewspackE2E --admin_user=admin --admin_password=password --admin_email=foo@bar.com --skip-email
       - run:
           name: Install Newspack plugin
           command: wp plugin install https://github.com/Automattic/newspack-plugin/releases/latest/download/newspack-plugin.zip --activate --allow-root
