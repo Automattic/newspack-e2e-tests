@@ -72,9 +72,7 @@ jobs:
       - store_artifacts:
           path: artifacts
       - store_artifacts:
-          path: cypress/snapshots/actual
-      - store_artifacts:
-          path: cypress/snapshots/diff
+          path: cypress/snapshots
 
 workflows:
   version: 2
