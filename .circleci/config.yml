@@ -1,7 +1,7 @@
 version: 2
 
 jobs:
-  build:
+  e2e:
     docker:
       - image: circleci/php:7.4.2-apache-node-browsers
       - image: circleci/mysql:5.7
@@ -78,4 +78,4 @@ workflows:
   version: 2
   all:
     jobs:
-      - build
+      - e2e
