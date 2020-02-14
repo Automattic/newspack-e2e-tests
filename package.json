@@ -4,7 +4,7 @@
   "description": "E2E tests suite for the Newspack project",
   "scripts": {
     "test": "cypress open",
-    "test:ci": "cypress run --env type=actual",
+    "test:ci": "cypress run",
     "test:visual:setup": "cypress run --browser electron --env type=base --config screenshotsFolder=cypress/snapshots/base",
     "test:visual:check": "cypress run --browser electron --env type=actual",
     "wp:copy-scripts": "cp -r ./scripts ./wordpress",
