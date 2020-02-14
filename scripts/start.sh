@@ -8,7 +8,7 @@ if [[ ! $(command -v wp) ]]; then
 fi
 
 printf "\n===========> Install WP\n"
-wp core install --allow-root --url=http://localhost:8000 --title=WordTesst --admin_user=admin --admin_password=password --admin_email=foo@bar.com
+wp core install --allow-root --url=http://localhost:8000 --title=NewspackE2E --admin_user=admin --admin_password=password --admin_email=foo@bar.com
 
 # check of Newspack plugin is installed, install if not
 wp plugin is-installed newspack-plugin --allow-root
