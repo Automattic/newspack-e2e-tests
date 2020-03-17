@@ -17,9 +17,12 @@ fi
 
 printf "\n===========> Install WP as $URL\n"
 wp core install --allow-root --url=$URL --title=NewspackE2E --admin_user=admin --admin_password=password --admin_email=newspacke2etesting@gmail.com
-if [[ $WP_VERSION ]]; then
+VERSION=$(wp core version --allow-root)
+if [[ $WP_VERSION && $VERSION != $WP_VERSION ]]; then
   printf "\n===========> Update WP version to $WP_VERSION\n"
   wp core update --version=$WP_VERSION --allow-root --force
+else
+  printf "\n===========> WP version is $VERSION\n"
 fi
 
 

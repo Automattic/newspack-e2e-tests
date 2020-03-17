@@ -6,8 +6,8 @@ if [[ ! $(command -v mysql) ]]; then
 fi
 
 if [[ $1 == 'plugins' ]]; then
-  printf "\n===========> Uninstall all plugins\n"
-  wp plugin uninstall --deactivate --all --allow-root
+  printf "\n===========> Remove all plugins\n"
+  rm -rf wp-content/plugins/*
 fi
 
 printf "===========> Reset DB\n"

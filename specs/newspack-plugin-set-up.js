@@ -59,14 +59,21 @@ describe("Set up Newspack plugin", () => {
     cy.visitWPURL(
       "/wp-admin/admin.php?page=newspack-setup-wizard#/theme-style-selection"
     );
+    cy.waitForNewspackWizardLoad();
     cy.contains("Theme");
+
+    // force, because the button is hidden - it shows on hover
+    cy.contains("button", "Activate").click({ force: true });
+    cy.wait(1000);
+    cy.waitForNewspackWizardLoad();
+
     cy.contains("Continue").click();
   });
 
   it("Install starter content", () => {
     cy.assertURLIncludes("starter-content");
     cy.waitForNewspackWizardLoad();
-    cy.contains("Install Starter Content").click();
+    cy.contains("Install Starter Content").click({ force: true });
 
     // wait for button to become disabled
     cy.wait(2000);
@@ -86,5 +93,14 @@ describe("Set up Newspack plugin", () => {
 
   it("Redirected to dashboard", () => {
     cy.assertURLIncludes("?page=newspack");
+  });
+
+  it("Visit the front-end", () => {
+    cy.visitWPURL();
+
+    // wait for images to load
+    cy.wait(1000);
+
+    cy.compareVisualRegressionScreenshot("body", "homepage-default-theme");
   });
 });

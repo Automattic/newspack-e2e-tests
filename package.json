@@ -10,7 +10,7 @@
     "wp:copy-scripts": "cp -r ./scripts ./wordpress",
     "wp:setup": "npm run wp:copy-scripts && docker exec wordpress_local ./scripts/start.sh",
     "wp:reset": "npm run wp:copy-scripts && docker exec wordpress_local ./scripts/reset.sh",
-    "wp:reset:plugins": "docker exec wordpress_local ./scripts/reset.sh plugins"
+    "wp:reset:plugins": "npm run wp:copy-scripts && docker exec wordpress_local ./scripts/reset.sh plugins"
   },
   "repository": {
     "type": "git",
