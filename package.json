@@ -9,7 +9,7 @@
     "test:visual:check": "cypress run --browser electron --env type=actual",
     "wp:copy-scripts": "cp -r ./scripts ./wordpress",
     "wp:setup": "npm run wp:copy-scripts && docker exec wordpress_local ./scripts/start.sh",
-    "wp:reset": "docker exec wordpress_local ./scripts/reset.sh",
+    "wp:reset": "npm run wp:copy-scripts && docker exec wordpress_local ./scripts/reset.sh",
     "wp:reset:plugins": "docker exec wordpress_local ./scripts/reset.sh plugins"
   },
   "repository": {
@@ -25,6 +25,7 @@
   "dependencies": {
     "cypress": "^4.0.1",
     "cypress-visual-regression": "^1.0.5",
-    "cypress-wait-until": "^1.6.1"
+    "cypress-wait-until": "^1.6.1",
+    "dotenv": "^8.2.0"
   }
 }

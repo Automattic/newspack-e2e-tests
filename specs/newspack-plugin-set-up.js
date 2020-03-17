@@ -4,9 +4,7 @@ describe("Set up Newspack plugin", () => {
   });
 
   it("Go to Newspack page", () => {
-    cy.get("#adminmenu")
-      .contains("Newspack")
-      .click();
+    cy.clickAdminMenu("Newspack");
 
     cy.assertURLIncludes("/wp-admin/admin.php?page=newspack-setup-wizard");
     cy.wpDismissPointers();
@@ -33,17 +31,13 @@ describe("Set up Newspack plugin", () => {
     );
 
     cy.contains("Continue").click();
-    cy.assertURLIncludes("/newsroom");
   });
 
   it("Fill newsroom data", () => {
+    cy.assertURLIncludes("/newsroom");
     cy.contains("Tell us about your Newsroom");
 
-    // wait until data loads - until then the UI is obscured
-    // (can be pretty slow onn CI)
-    cy.waitUntil(() => Cypress.$(".newspack-wizard__is-loading").length === 0, {
-      timeout: 20000
-    });
+    cy.waitForNewspackWizardLoad();
 
     cy.selectOption("Size of your newsroom", "4-10");
     cy.selectOption("Your publishing medium", "both", "Digital and Print");
@@ -59,5 +53,38 @@ describe("Set up Newspack plugin", () => {
     );
 
     cy.contains("Continue").click();
+  });
+
+  it("Theme selection", () => {
+    cy.visitWPURL(
+      "/wp-admin/admin.php?page=newspack-setup-wizard#/theme-style-selection"
+    );
+    cy.contains("Theme");
+    cy.contains("Continue").click();
+  });
+
+  it("Install starter content", () => {
+    cy.assertURLIncludes("starter-content");
+    cy.waitForNewspackWizardLoad();
+    cy.contains("Install Starter Content").click();
+
+    // wait for button to become disabled
+    cy.wait(2000);
+
+    cy.waitUntil(
+      () =>
+        Cypress.$(`button:contains("Install Starter Content")[disabled]`)
+          .length === 0,
+      {
+        errorMsg: "Timout exceeded when waiting for starter content.",
+        // wait for 2mns max
+        timeout: 2 * 60000,
+        interval: 2000
+      }
+    );
+  });
+
+  it("Redirected to dashboard", () => {
+    cy.assertURLIncludes("?page=newspack");
   });
 });

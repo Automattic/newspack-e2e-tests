@@ -19,3 +19,11 @@ Cypress.Commands.add("fillInput", (label, value) => {
 Cypress.Commands.add("assertURLIncludes", value => {
   cy.url().should("include", value);
 });
+
+// wait until data loads - until then the UI is obscured
+// (can be pretty slow on CI)
+Cypress.Commands.add("waitForNewspackWizardLoad", value => {
+  cy.waitUntil(() => Cypress.$(".newspack-wizard__is-loading").length === 0, {
+    timeout: 20000
+  });
+});
