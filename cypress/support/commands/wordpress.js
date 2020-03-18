@@ -27,14 +27,20 @@ Cypress.Commands.add("wpLogin", () => {
   cy.wait(1000);
 
   cy.get("input[name=log]")
+    .clear()
     .type("admin")
     .should("have.value", "admin");
 
   cy.get("input[name=pwd]")
+    .clear()
     .type("password")
     .should("have.value", "password");
 
   cy.contains("Log In").click();
+});
+
+Cypress.Commands.add("wpLogout", () => {
+  cy.contains("a", "Log Out").click({ force: true });
 });
 
 Cypress.Commands.add("clickAdminMenu", name => {
