@@ -24,6 +24,8 @@ For a real hard reset, stop the `docker-compose` process, remove containers (`do
 
 ### Visual regression testing
 
+**To be ran locally on a macOS.** This is because the CI machines run Ubuntu, which has different default fonts. The workflow of creating the snapshots on CI and committing them to the repo from there seems like an overkill for now.
+
 After adding a new visual regression test, run `$ npm run test:visual:setup` to create the base images.
 
 To check for visual regressions, run `$ npm run test:visual:check`.
