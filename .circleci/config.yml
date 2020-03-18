@@ -14,7 +14,6 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/
-      # TODO test this on CI
       - run:
           name: Create .env file from env vars
           command: printenv > ./scripts/.env
