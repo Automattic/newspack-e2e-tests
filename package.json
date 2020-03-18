@@ -14,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/utomattic/newspack-e2e-tests.git"
+    "url": "git+https://github.com/Automattic/newspack-e2e-tests.git"
   },
   "keywords": [],
   "author": "Automattic",
   "bugs": {
-    "url": "https://github.com/utomattic/newspack-e2e-tests/issues"
+    "url": "https://github.com/Automattic/newspack-e2e-tests/issues"
   },
-  "homepage": "https://github.com/utomattic/newspack-e2e-tests#readme",
+  "homepage": "https://github.com/Automattic/newspack-e2e-tests#readme",
   "dependencies": {
     "cypress": "^4.0.1",
     "cypress-visual-regression": "^1.0.5",
