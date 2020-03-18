@@ -31,6 +31,11 @@ wp plugin is-installed newspack-plugin --allow-root
 if [[ $? == 1 ]]; then
   printf "\n===========> Install Newspack plugin\n"
   wp plugin install https://github.com/Automattic/newspack-plugin/releases/latest/download/newspack-plugin.zip --force --allow-root --activate
+
+  # TODO blocks and theme should be installed in setup wizard, but this step
+  # is now skipped because it's too brittle in tests
+  wp plugin install https://github.com/Automattic/newspack-blocks/releases/latest/download/newspack-blocks.zip --force --allow-root --activate
+  wp theme install https://github.com/Automattic/newspack-theme/releases/latest/download/newspack-theme.zip --force --allow-root
 fi
 
 # check of Newspack plugin is activated, active if not
