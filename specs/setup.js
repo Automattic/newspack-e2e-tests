@@ -1,4 +1,4 @@
-describe("Set up Newspack plugin", () => {
+describe("Setup Newspack plugin", () => {
   it("Log in to admin", () => {
     cy.wpLogin();
   });
@@ -93,14 +93,5 @@ describe("Set up Newspack plugin", () => {
 
   it("Redirected to dashboard", () => {
     cy.assertURLIncludes("?page=newspack");
-  });
-
-  it("Visit the front-end", () => {
-    cy.visitWPURL();
-
-    // wait for images to load
-    cy.wait(1000);
-
-    cy.compareVisualRegressionScreenshot("body", "homepage-default-theme");
   });
 });
