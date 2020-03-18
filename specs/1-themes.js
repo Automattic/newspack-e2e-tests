@@ -33,6 +33,9 @@ const checkTheme = (themeSlug, options = {}) => {
       .first()
       .click();
 
+    // wait for images to load
+    cy.wait(1000);
+
     cy.compareVisualRegressionScreenshot("body", `${themeSlug}-post--phone`);
     cy.viewport(1000, 660);
     cy.compareVisualRegressionScreenshot("body", `${themeSlug}-post`);
