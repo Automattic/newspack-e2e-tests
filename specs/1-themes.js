@@ -1,20 +1,25 @@
-const checkTheme = themeSlug => {
-  it(`Switch to theme ${themeSlug}`, () => {
-    cy.wpLogin();
-    cy.visitWPURL("/wp-admin/admin.php?page=newspack-site-design-wizard");
-    cy.waitForNewspackWizardLoad();
+const checkTheme = (themeSlug, options = {}) => {
+  if (!options.skipActivation) {
+    it(`Switch to theme ${themeSlug}`, () => {
+      cy.wpLogin();
+      cy.visitWPURL("/wp-admin/admin.php?page=newspack-site-design-wizard");
+      cy.waitForNewspackWizardLoad();
 
-    cy.get(`#card--${themeSlug} button`)
-      .first()
-      // force, because the button is hidden - it's shown on hover
-      .click({ force: true });
-    cy.wait(1000);
-    cy.waitForNewspackWizardLoad();
-    cy.wpLogout();
-  });
+      cy.get(`#card--${themeSlug} button`)
+        .first()
+        // force, because the button is hidden - it's shown on hover
+        .click({ force: true });
+      cy.wait(1000);
+      cy.waitForNewspackWizardLoad();
+      cy.wpLogout();
+    });
+  }
 
   it(`Check theme ${themeSlug}`, () => {
     cy.visitWPURL();
+
+    // wait for images to load
+    cy.wait(1000);
 
     cy.compareVisualRegressionScreenshot("body", `${themeSlug}-homepage`);
     cy.viewport("iphone-6");
@@ -35,7 +40,7 @@ const checkTheme = themeSlug => {
 };
 
 describe("Newspack themes", () => {
-  checkTheme("newspack-theme");
+  checkTheme("newspack-theme", { skipActivation: true });
   checkTheme("newspack-scott");
   checkTheme("newspack-nelson");
   checkTheme("newspack-katharine");

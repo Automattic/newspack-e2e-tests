@@ -92,6 +92,7 @@ describe("Setup Newspack plugin", () => {
   });
 
   it("Redirected to dashboard", () => {
-    cy.assertURLIncludes("?page=newspack");
+    cy.assertURLMatches(/page=newspack$/);
+    cy.wpLogout();
   });
 });

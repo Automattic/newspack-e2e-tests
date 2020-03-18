@@ -20,6 +20,10 @@ Cypress.Commands.add("assertURLIncludes", value => {
   cy.url().should("include", value);
 });
 
+Cypress.Commands.add("assertURLMatches", regexp => {
+  cy.url().should("match", regexp);
+});
+
 // wait until data loads - until then the UI is obscured
 // (can be pretty slow on CI)
 Cypress.Commands.add("waitForNewspackWizardLoad", value => {
