@@ -7,6 +7,7 @@ fi
 
 if [[ $1 == 'plugins' ]]; then
   printf "\n===========> Remove all plugins\n"
+  wp plugin deactivate --allow-root --all
   rm -rf wp-content/plugins/*
 fi
 

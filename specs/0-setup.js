@@ -11,6 +11,7 @@ describe("Setup Newspack plugin", () => {
 
     cy.contains("Welcome to WordPress for your Newsroom");
 
+    cy.waitForNewspackWizardLoad();
     cy.contains("Get started").click();
     cy.assertURLIncludes("/about");
   });
@@ -51,8 +52,6 @@ describe("Setup Newspack plugin", () => {
       "#newspack-setup-wizard",
       "wizard-after-newsroom-data"
     );
-
-    cy.contains("Continue").click();
   });
 
   it("Theme selection", () => {
