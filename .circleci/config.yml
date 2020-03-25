@@ -53,6 +53,9 @@ jobs:
           name: Install Newspack plugin
           command: wp plugin install https://github.com/Automattic/newspack-plugin/releases/latest/download/newspack-plugin.zip --activate --allow-root
       - run:
+          name: Set WP config variables
+          command: wp config set WP_NEWSPACK_DETERMINISTIC_STARTER_CONTENT 1 --allow-root
+      - run:
           name: Launch server
           command: wp server --port=8000 --allow-root
           background: true
