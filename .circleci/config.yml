@@ -3,8 +3,8 @@ version: 2
 jobs:
   e2e:
     docker:
-      - image: circleci/php:7.4.2-apache-node-browsers
-      - image: circleci/mysql:5.7
+      - image: cimg/php:7.4-browsers
+      - image: cimg/mysql:8
         environment:
           MYSQL_ROOT_PASSWORD: somewordpress
           MYSQL_DATABASE: wordpress

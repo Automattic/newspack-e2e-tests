@@ -7,7 +7,7 @@ Cypress.Commands.add("wpDismissPointers", (value) => {
 });
 
 Cypress.Commands.add("wpLogin", () => {
-  cy.visit("http://localhost:8000/wp-login.php");
+  cy.visitWPURL("/wp-login.php");
 
   // Cypress sometimes lost focus on the input when the page was
   // still loading, waiting here for a sec seems to fix that.
@@ -15,7 +15,14 @@ Cypress.Commands.add("wpLogin", () => {
 
   cy.get("input[name=log]").clear().type("admin").should("have.value", "admin");
 
-  cy.get("input[name=pwd]").type("password").should("have.value", "password");
+  cy.get("input[name=pwd]")
+    .clear()
+    .type("password")
+    .should("have.value", "password");
 
   cy.contains("Log In").click();
+});
+
+Cypress.Commands.add("visitWPURL", (route) => {
+  cy.visit(`${getSiteUrl()}${route || ""}`);
 });
