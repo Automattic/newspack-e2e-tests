@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source './scripts/.env'
+
 if [[ ! $(command -v wp) ]]; then
   printf "===========> Install WP CLI\n"
   curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
@@ -7,19 +9,15 @@ if [[ ! $(command -v wp) ]]; then
   mv wp-cli.phar /usr/local/bin/wp
 fi
 
-printf "\n===========> Install WP\n"
-wp core install --allow-root --url=http://localhost:8000 --title=NewspackE2E --admin_user=admin --admin_password=password --admin_email=foo@bar.com
-
-# check of Newspack plugin is installed, install if not
-wp plugin is-installed newspack-plugin --allow-root
-if [[ $? == 1 ]]; then
-  printf "\n===========> Install Newspack plugin\n"
-  wp plugin install https://github.com/Automattic/newspack-plugin/releases/latest/download/newspack-plugin.zip --force --allow-root
+URL="http://localhost:8000"
+wp core install --allow-root --url=$URL --title=NewspackE2E --admin_user=admin --admin_password=password --admin_email=newspacke2etesting@gmail.com
+VERSION=$(wp core version --allow-root)
+if [[ $WP_VERSION && $VERSION != $WP_VERSION ]]; then
+  printf "\n===========> Update WP version to $WP_VERSION\n"
+  wp core update --version=$WP_VERSION --allow-root --force
+else
+  printf "\n===========> WP version is $VERSION\n"
 fi
 
-# check of Newspack plugin is activated, active if not
-wp plugin is-active newspack-plugin --allow-root
-if [[ $? == 1 ]]; then
-  printf "\n===========> Activate Newspack plugin\n"
-  wp plugin activate newspack-plugin --allow-root
-fi
+printf "\n===========> Install & activate latest version of Newspack plugin\n"
+wp plugin install https://github.com/Automattic/newspack-plugin/releases/latest/download/newspack-plugin.zip --force --activate --allow-root
