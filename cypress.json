@@ -1,0 +1,8 @@
+{
+  "baseUrl": "http://localhost:8000/",
+  "integrationFolder": "specs",
+  "screenshotsFolder": "artifacts/screenshots",
+  "videosFolder": "artifacts/videos",
+  "screenshotsFolder": "cypress/snapshots/actual",
+  "trashAssetsBeforeRuns": true
+}

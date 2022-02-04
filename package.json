@@ -4,19 +4,27 @@
   "description": "E2E tests suite for the Newspack project",
   "scripts": {
     "test": "cypress open",
+    "test:ci": "cypress run",
+    "test:visual:setup": "cypress run --browser electron --env type=base --config screenshotsFolder=cypress/snapshots/base",
+    "test:visual:check": "cypress run --browser electron --env type=actual",
+    "wp:copy-scripts": "cp -r ./scripts ./wordpress",
+    "wp:setup": "npm run wp:copy-scripts && docker exec wordpress_local ./scripts/start.sh",
+    "wp:reset": "npm run wp:copy-scripts && docker exec wordpress_local ./scripts/reset.sh",
+    "wp:reset:plugins": "npm run wp:copy-scripts && docker exec wordpress_local ./scripts/reset.sh plugins"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/utomattic/newspack-e2e-tests.git"
+    "url": "git+https://github.com/Automattic/newspack-e2e-tests.git"
   },
   "keywords": [],
   "author": "Automattic",
   "bugs": {
-    "url": "https://github.com/utomattic/newspack-e2e-tests/issues"
+    "url": "https://github.com/Automattic/newspack-e2e-tests/issues"
   },
-  "homepage": "https://github.com/utomattic/newspack-e2e-tests#readme",
+  "homepage": "https://github.com/Automattic/newspack-e2e-tests#readme",
   "dependencies": {
-    "cypress": "^4.0.1",
-    "cypress-visual-regression": "^1.0.5"
+    "cypress": "^9.4.1",
+    "cypress-visual-regression": "^1.6.3",
+    "cypress-wait-until": "^1.7.2"
   }
 }
