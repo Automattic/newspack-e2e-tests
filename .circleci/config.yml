@@ -4,7 +4,7 @@ jobs:
   e2e:
     docker:
       - image: cimg/php:7.4-browsers
-      - image: cimg/mysql:8
+      - image: cimg/mysql:8.0
         environment:
           MYSQL_ROOT_PASSWORD: somewordpress
           MYSQL_DATABASE: wordpress
