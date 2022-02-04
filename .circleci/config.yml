@@ -26,7 +26,7 @@ jobs:
             echo Failed waiting for MySQL && exit 1
       - run:
           name: Install mysql client
-          command: sudo apt-get update && sudo apt-get install default-mysql-client
+          command: sudo apt-get update && sudo apt-get install -y default-mysql-client
       - run:
           # https://wordpress.stackexchange.com/a/338289
           name: Install PHP extensions
