@@ -13,5 +13,5 @@ import "./commands";
 
 // preserve all cookies
 Cypress.Cookies.defaults({
-  whitelist: /\.*/
+  preserve: /\.*/,
 });
