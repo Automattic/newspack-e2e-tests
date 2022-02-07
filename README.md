@@ -6,10 +6,9 @@
 
 ## How to
 
-1. start docker-compose: `$ docker-compose up`
-1. wait for `Complete! WordPress has been successfully copied to /var/www/html` message from `wordpress_local` container in the logs
-1. in a new terminal session, run setup script in the container: `$ npm run wp:setup`
-1. start Cypress:
+1. Start docker-compose: `$ docker-compose up`
+1. In a new terminal session, run setup script in the container: `$ npm run wp:setup`
+1. Start Cypress:
   - no UI, run headless - `$ npm run test:ci`
   - with Cypress UI - `$ npm run test`
 
@@ -20,6 +19,11 @@ Run `$ npm run wp:reset` to reset the WP DB.
 Run `$ npm run wp:reset:plugins` to reset the WP DB and remove all plugins.
 
 For a real hard reset, stop the `docker-compose` process, remove containers (`docker-compose down --volumes`), and repeat the initial setup form above.
+
+### Running tests agains local plugin version
+
+1. Remove the `./wordpress/wp-content/plugins/newspack-plugin`
+1. Sync the local content to the Docker container volume: `$ rsync -a --exclude-from='.distignore' . /path/to/newspack-e2e-tests/wordpress/wp-content/plugins/newspack-plugin`
 
 ### Visual regression testing
 
