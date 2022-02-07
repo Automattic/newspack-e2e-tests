@@ -33,10 +33,7 @@ jobs:
             sudo apt-get install -y php-mysqli
       - run:
           name: Install wp-cli
-          command: |
-            curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-            chmod +x wp-cli.phar
-            sudo mv wp-cli.phar /usr/local/bin/wp
+          command: sudo ./scripts/install-wp-cli.sh
       - run:
           name: Download WordPress
           command: wp core download --allow-root
@@ -44,11 +41,8 @@ jobs:
           name: Configure WordPress
           command: wp core config --allow-root --dbname=wordpress --dbuser=wordpress --dbhost=127.0.0.1 --dbpass=wordpress
       - run:
-          name: Install WordPress
-          command: wp core install --allow-root --url=http://localhost:8000 --title=NewspackE2E --admin_user=admin --admin_password=password --admin_email=foo@bar.com --skip-email
-      - run:
-          name: Install Newspack plugin
-          command: wp plugin install https://github.com/Automattic/newspack-plugin/releases/latest/download/newspack-plugin.zip --activate --allow-root
+          name: Setup WP & plugins
+          command: sudo ./scripts/setup.sh
       - run:
           name: Launch server
           command: wp server --port=8000 --allow-root
