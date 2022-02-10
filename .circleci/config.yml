@@ -31,6 +31,7 @@ jobs:
             sudo apt-get install -y default-mysql-client
             sudo apt-get install -y libgbm-dev
             sudo apt-get install -y php-mysqli
+            sudo apt-get install -y jq
       - run:
           name: Install wp-cli
           command: sudo ./scripts/install-wp-cli.sh
