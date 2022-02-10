@@ -25,7 +25,7 @@ jobs:
             done
             echo Failed waiting for MySQL && exit 1
       - run:
-          name: Install mysql client
+          name: Install necessary dependencies
           command: |
             sudo apt-get update --allow-releaseinfo-change
             sudo apt-get install -y default-mysql-client
