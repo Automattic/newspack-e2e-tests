@@ -20,6 +20,7 @@ log "Install and activate necessary plugins & the theme"
 install_plugin newspack-plugin
 install_plugin newspack-blocks
 install_plugin newspack-newsletters
+install_plugin newspack-popups
 install_plugin jetpack
 install_plugin amp
 install_plugin pwa
@@ -33,3 +34,14 @@ fi
 
 log "Set WP config variables"
 wp config set WP_NEWSPACK_IS_E2E true --allow-root
+
+log "Create the config file for Newspack Campaigns"
+echo "
+<?php
+define( 'DB_USER', 'wordpress' );
+define( 'DB_PASSWORD', 'wordpress' );
+define( 'DB_NAME', 'wordpress' );
+define( 'DB_HOST', 'db:3306' );
+define( 'DB_CHARSET', 'utf8' );
+define( 'DB_PREFIX', 'wp_' );
+" >> wp-content/newspack-popups-config.php
