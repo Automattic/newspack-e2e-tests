@@ -39,5 +39,8 @@ function install_plugin() {
       wp plugin install $PLUGIN_NAME --force --allow-root
     fi
   fi
-  wp plugin activate $PLUGIN_NAME --allow-root
+  wp plugin is-active $PLUGIN_NAME --allow-root
+  if [[ $? == 1 ]]; then
+    wp plugin activate $PLUGIN_NAME --allow-root
+  fi
 }
