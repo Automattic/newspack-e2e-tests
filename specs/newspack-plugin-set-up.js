@@ -41,5 +41,8 @@ describe("Set up Newspack plugin", () => {
     cy.contains("Site Design");
     cy.contains("Reader Revenue");
     cy.contains("Advertising");
+
+    // Site title has been updated.
+    cy.get("#wp-admin-bar-site-name").contains("End To End");
   });
 });
