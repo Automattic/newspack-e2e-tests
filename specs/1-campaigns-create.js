@@ -43,6 +43,8 @@ describe("Campaigns", () => {
     cy.intercept("GET", /newspack/).as("campaignsAPI");
     cy.wait("@campaignsAPI").then((req) => cy.log(req.response.body));
 
+    cy.get("amp-analytics").then((el) => cy.log(el.get(0).innerHTML));
+
     cy.get(".newspack-popup")
       .contains(promptContent, { timeout: 120000 })
       .should("be.visible");
