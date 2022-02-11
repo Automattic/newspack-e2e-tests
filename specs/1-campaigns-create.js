@@ -39,6 +39,10 @@ describe("Campaigns", () => {
     cy.visitWPURL("/");
 
     cy.get(".entry-title a").first().click();
-    cy.get(".newspack-popup").contains(promptContent);
+    // w/out be.visible it works, so the HTML is there
+    // but the request to Campaigns API is not made?
+    cy.get(".newspack-popup")
+      .contains(promptContent, { timeout: 120000 })
+      .should("be.visible");
   });
 });
