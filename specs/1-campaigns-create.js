@@ -41,7 +41,10 @@ describe("Campaigns", () => {
     cy.get(".entry-title a").first().click();
 
     cy.intercept("GET", /newspack/).as("campaignsAPI");
-    cy.wait("@campaignsAPI").then((req) => cy.log(req.response.body));
+    cy.wait("@campaignsAPI").then((req) => {
+      const data = req.response.body;
+      cy.exec(`echo '${data}' > ./artifacts/log.txt`);
+    });
 
     // cy.get("amp-analytics").then((el) => cy.log(el.get(0).innerHTML));
 
