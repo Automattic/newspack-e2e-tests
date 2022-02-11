@@ -16,7 +16,7 @@ describe("Set up Newspack plugin", () => {
 
     cy.contains("Installing…");
 
-    cy.contains("a", "Continue", { timeout: 60000 }).click();
+    cy.contains("a", "Continue", { timeout: 120000 }).click();
   });
 
   it("Configure Newspack", () => {
