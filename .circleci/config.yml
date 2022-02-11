@@ -97,33 +97,43 @@ jobs:
 
 workflows:
   version: 2
-  # test-stable:
-  #   triggers:
-  #     - schedule:
-  #         cron: "0 7 * * 4" # Thursdays at 7am UTC / 2am EST / 11pm PST
-  #         filters:
-  #           branches:
-  #             only:
-  #               - master
-  #   jobs:
-  #     - e2e-stable
-  test-alpha:
-    # triggers:
-    #   - schedule:
-    #       cron: "0 7 * * 1" # Mondays at 7am UTC / 2am EST / 11pm PST
-    #       filters:
-    #         branches:
-    #           only:
-    #             - master
+  test-stable-scheduled:
+    triggers:
+      - schedule:
+          cron: "0 7 * * 4" # Thursdays at 7am UTC / 2am EST / 11pm PST
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - e2e-stable
+  test-alpha-scheduled:
+    triggers:
+      - schedule:
+          cron: "0 7 * * 1" # Mondays at 7am UTC / 2am EST / 11pm PST
+          filters:
+            branches:
+              only:
+                - master
     jobs:
       - e2e-alpha
-  # test-master:
-  #   triggers:
-  #     - schedule:
-  #         cron: "0 7 * * 1-5" # Weekdays at 7am UTC / 2am EST / 11pm PST
-  #         filters:
-  #           branches:
-  #             only:
-  #               - master
-    # jobs:
-    #   - e2e-master
+  test-master-scheduled:
+    triggers:
+      - schedule:
+          cron: "0 7 * * 1-5" # Weekdays at 7am UTC / 2am EST / 11pm PST
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - e2e-master
+
+  test-stable:
+    jobs:
+      - e2e-stable
+  test-alpha:
+    jobs:
+      - e2e-alpha
+  test-master:
+    jobs:
+      - e2e-master
