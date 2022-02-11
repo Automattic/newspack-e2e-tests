@@ -14,5 +14,5 @@ fi
 printf "===========> Reset DB\n"
 wp db clean --yes --allow-root
 
-printf "===========> Re-run start script \n"
-./scripts/start.sh
+printf "===========> Re-run setup script \n"
+./scripts/setup.sh

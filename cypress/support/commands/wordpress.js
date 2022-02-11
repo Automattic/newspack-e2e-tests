@@ -1,9 +1,15 @@
 // Dismiss small popups that obscure admin UI
 // e.g. AMP plugin add one about AMP Stories
-Cypress.Commands.add("wpDismissPointers", (value) => {
+Cypress.Commands.add("wpDismissPointers", () => {
   if (Cypress.$(".wp-pointer").length > 0) {
     cy.get(".wp-pointer .close").click();
   }
+});
+
+// Dismiss block editor intro.
+Cypress.Commands.add("wpDismissBlockEditorIntro", () => {
+  const selector = '[aria-label="Welcome to the block editor"]';
+  cy.get(selector).get('[aria-label="Close dialog"]').click();
 });
 
 Cypress.Commands.add("wpLogin", () => {

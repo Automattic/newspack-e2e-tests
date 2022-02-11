@@ -1,7 +1,7 @@
-version: 2
+version: 2.1
 
-jobs:
-  e2e:
+executors:
+  docker-wordpress:
     docker:
       - image: cimg/php:7.4-browsers
       - image: cimg/mysql:8.0
@@ -10,10 +10,16 @@ jobs:
           MYSQL_DATABASE: wordpress
           MYSQL_USER: wordpress
           MYSQL_PASSWORD: wordpress
+
+commands:
+  e2e:
     steps:
       - checkout
       - attach_workspace:
           at: ~/
+      - run:
+          name: Create .env file from env vars
+          command: printenv > ./scripts/.env
       - run:
           name: Waiting for MySQL to be ready
           command: |
@@ -25,18 +31,16 @@ jobs:
             done
             echo Failed waiting for MySQL && exit 1
       - run:
-          name: Install mysql client
+          name: Install necessary dependencies
           command: |
             sudo apt-get update --allow-releaseinfo-change
             sudo apt-get install -y default-mysql-client
             sudo apt-get install -y libgbm-dev
             sudo apt-get install -y php-mysqli
+            sudo apt-get install -y jq
       - run:
           name: Install wp-cli
-          command: |
-            curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-            chmod +x wp-cli.phar
-            sudo mv wp-cli.phar /usr/local/bin/wp
+          command: sudo ./scripts/install-wp-cli.sh
       - run:
           name: Download WordPress
           command: wp core download --allow-root
@@ -44,11 +48,8 @@ jobs:
           name: Configure WordPress
           command: wp core config --allow-root --dbname=wordpress --dbuser=wordpress --dbhost=127.0.0.1 --dbpass=wordpress
       - run:
-          name: Install WordPress
-          command: wp core install --allow-root --url=http://localhost:8000 --title=NewspackE2E --admin_user=admin --admin_password=password --admin_email=foo@bar.com --skip-email
-      - run:
-          name: Install Newspack plugin
-          command: wp plugin install https://github.com/Automattic/newspack-plugin/releases/latest/download/newspack-plugin.zip --activate --allow-root
+          name: Setup WP & plugins
+          command: sudo ./scripts/setup.sh
       - run:
           name: Launch server
           command: wp server --port=8000 --allow-root
@@ -74,8 +75,65 @@ jobs:
       - store_artifacts:
           path: cypress/snapshots
 
+jobs:
+  e2e-stable:
+    executor: docker-wordpress
+    environment:
+      TEST_CHANNEL: stable
+    steps:
+      - e2e
+  e2e-alpha:
+    executor: docker-wordpress
+    environment:
+      TEST_CHANNEL: alpha
+    steps:
+      - e2e
+  e2e-master:
+    executor: docker-wordpress
+    environment:
+      TEST_CHANNEL: master
+    steps:
+      - e2e
+
 workflows:
   version: 2
-  all:
+  test-stable-scheduled:
+    triggers:
+      - schedule:
+          cron: "0 7 * * 4" # Thursdays at 7am UTC / 2am EST / 11pm PST
+          filters:
+            branches:
+              only:
+                - master
     jobs:
-      - e2e
+      - e2e-stable
+  test-alpha-scheduled:
+    triggers:
+      - schedule:
+          cron: "0 7 * * 1" # Mondays at 7am UTC / 2am EST / 11pm PST
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - e2e-alpha
+  test-master-scheduled:
+    triggers:
+      - schedule:
+          cron: "0 7 * * 1-5" # Weekdays at 7am UTC / 2am EST / 11pm PST
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - e2e-master
+
+  test-stable:
+    jobs:
+      - e2e-stable
+  test-alpha:
+    jobs:
+      - e2e-alpha
+  test-master:
+    jobs:
+      - e2e-master
