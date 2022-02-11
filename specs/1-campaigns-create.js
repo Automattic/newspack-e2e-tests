@@ -39,6 +39,8 @@ describe("Campaigns", () => {
     cy.visitWPURL("/");
 
     cy.get(".entry-title a").first().click();
-    cy.get(".newspack-popup").contains(promptContent).should('be.visible');
+    cy.get(".newspack-popup")
+      .contains(promptContent, { timeout: 60000 })
+      .should("be.visible");
   });
 });
