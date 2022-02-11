@@ -1,5 +1,6 @@
 describe("Campaigns", () => {
   const promptContent = "Welcome to our site!";
+
   it("Visit the Campaigns wizard", () => {
     cy.wpLogin();
     cy.get("#adminmenu").contains("Newspack").click();

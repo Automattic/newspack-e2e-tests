@@ -39,10 +39,16 @@ fi
 log "Set WP config variables"
 wp config set WP_NEWSPACK_IS_E2E true --allow-root
 
+# DB host locally is db:3306, but on CircleCI it's 127.0.0.1
+DB_HOST='db:3306'
+if [[ -v CI ]]; then
+  DB_HOST='127.0.0.1'
+fi
+
 log "Create the config file for Newspack Campaigns"
 echo "<?php
 define( 'DB_USER', 'wordpress' );
 define( 'DB_PASSWORD', 'wordpress' );
 define( 'DB_NAME', 'wordpress' );
-define( 'DB_HOST', '127.0.0.1' );
+define( 'DB_HOST', '$DB_HOST' );
 " > wp-content/newspack-popups-config.php
