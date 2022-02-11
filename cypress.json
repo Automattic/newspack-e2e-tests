@@ -4,5 +4,6 @@
   "screenshotsFolder": "artifacts/screenshots",
   "videosFolder": "artifacts/videos",
   "screenshotsFolder": "cypress/snapshots/actual",
-  "trashAssetsBeforeRuns": true
+  "trashAssetsBeforeRuns": true,
+  "defaultCommandTimeout": 6000
 }
