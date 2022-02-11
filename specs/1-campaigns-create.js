@@ -39,6 +39,6 @@ describe("Campaigns", () => {
     cy.visitWPURL("/");
 
     cy.get(".entry-title a").first().click();
-    cy.get(".newspack-popup").contains(promptContent);
+    cy.get(".newspack-popup").contains(promptContent).should('be.visible');
   });
 });

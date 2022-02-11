@@ -15,6 +15,10 @@ else
   log "WP version is $VERSION"
 fi
 
+TEST_CHANNEL="${TEST_CHANNEL:-stable}"
+
+log "Test channel is: $TEST_CHANNEL"
+
 # Installation during E2E tests is too brittle.
 log "Install and activate necessary plugins & the theme"
 install_plugin newspack-plugin
@@ -44,4 +48,4 @@ define( 'DB_NAME', 'wordpress' );
 define( 'DB_HOST', 'db:3306' );
 define( 'DB_CHARSET', 'utf8' );
 define( 'DB_PREFIX', 'wp_' );
-" >> wp-content/newspack-popups-config.php
+" > wp-content/newspack-popups-config.php

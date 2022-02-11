@@ -14,16 +14,32 @@
 
 ### Resetting the data
 
-Run `$ npm run wp:reset` to reset the WP DB.
-
-Run `$ npm run wp:reset:plugins` to reset the WP DB and remove all plugins.
+Run `$ npm run wp:reset` to reset the WP DB and re-run setup script.
 
 For a real hard reset, stop the `docker-compose` process, remove containers (`docker-compose down --volumes`), and repeat the initial setup form above.
 
-### Running tests agains local plugin version
+### Testing channels
+
+There are three "testing channels" available, meaning three sources for the Newspack plugins:
+
+1. Stable releases channel – versions currently distributed on Github
+1. `master` branches channel – versions built from `master` branches
+1. `alpha` branches channel – versions currently distributed on Github as pre-releases
+
+The CI for this project should be configured to run tests periodically – after release days for the stable & `alpha` channels, and daily for `master` branches channel.
+
+The stable channel is the default. To use a different channel while developing tests locally, add `TEST_CHANNEL` variable in `scripts/.env`. If using `master` branches channel, a `CIRCLE_API_TOKEN` variable will also be needed, to fetch files from CI.
+
+### Running tests agains a local plugin version
 
 1. Remove the `./wordpress/wp-content/plugins/newspack-plugin`
 1. Sync the local content to the Docker container volume: `$ rsync -a --exclude-from='.distignore' . /path/to/newspack-e2e-tests/wordpress/wp-content/plugins/newspack-plugin`
+
+_Pro tip: use [chokidar](https://www.npmjs.com/package/chokidar) to sync local repository to the Docker machine, by running this in the plugin folder:_
+
+```
+$ chokidar "." -c "rsync -a --exclude-from='.distignore' . /path/to/newspack-e2e-tests/wordpress/wp-content/plugins/newspack-plugin"
+```
 
 ### Visual regression testing
 

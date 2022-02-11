@@ -1,7 +1,7 @@
-version: 2
+version: 2.1
 
-jobs:
-  e2e:
+executors:
+  docker-wordpress:
     docker:
       - image: cimg/php:7.4-browsers
       - image: cimg/mysql:8.0
@@ -10,6 +10,15 @@ jobs:
           MYSQL_DATABASE: wordpress
           MYSQL_USER: wordpress
           MYSQL_PASSWORD: wordpress
+
+commands:
+  e2e:
+    parameters:
+      channel:
+        default: 'stable'
+        type: string
+    environment:
+      TEST_CHANNEL: <<parameters.channel>>
     steps:
       - checkout
       - attach_workspace:
@@ -69,8 +78,52 @@ jobs:
       - store_artifacts:
           path: cypress/snapshots
 
+jobs:
+  e2e-stable:
+    executor: docker-wordpress
+    steps:
+      - e2e:
+        channel: 'stable'
+  e2e-alpha:
+    executor: docker-wordpress
+    steps:
+      - e2e:
+        channel: 'alpha'
+  e2e-master:
+    executor: docker-wordpress
+    steps:
+      - e2e:
+        channel: 'master'
+
 workflows:
   version: 2
-  all:
+  test-stable:
+    triggers:
+      - schedule:
+          cron: "0 7 * * 4" # Thursdays at 7am UTC / 2am EST / 11pm PST
+          filters:
+            branches:
+              only:
+                - master
     jobs:
-      - e2e
+      - e2e-stable
+  test-alpha:
+    triggers:
+      - schedule:
+          cron: "0 7 * * 1" # Mondays at 7am UTC / 2am EST / 11pm PST
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - e2e-alpha
+  test-master:
+    triggers:
+      - schedule:
+          cron: "0 7 * * 1-5" # Weekdays at 7am UTC / 2am EST / 11pm PST
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - e2e-master

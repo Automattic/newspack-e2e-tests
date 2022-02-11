@@ -9,8 +9,7 @@
     "test:visual:check": "cypress run --browser electron --env type=actual",
     "wp:copy-scripts": "cp -r ./scripts ./wordpress",
     "wp:setup": "npm run wp:copy-scripts && docker exec wordpress_local ./scripts/setup.sh",
-    "wp:reset": "npm run wp:copy-scripts && docker exec wordpress_local ./scripts/reset.sh",
-    "wp:reset:plugins": "npm run wp:copy-scripts && docker exec wordpress_local ./scripts/reset.sh plugins"
+    "wp:reset": "npm run wp:copy-scripts && docker exec wordpress_local ./scripts/reset.sh"
   },
   "repository": {
     "type": "git",
