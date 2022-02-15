@@ -30,7 +30,7 @@ The CI for this project should be configured to run tests periodically – after
 
 The stable channel is the default. To use a different channel while developing tests locally, add `TEST_CHANNEL` variable in `scripts/.env`. If using `master` branches channel, a `CIRCLE_API_TOKEN` variable will also be needed, to fetch files from CI.
 
-### Running tests agains a local plugin version
+### Running tests against a local plugin version
 
 1. Remove the `./wordpress/wp-content/plugins/newspack-plugin`
 1. Sync the local content to the Docker container volume: `$ rsync -a --exclude-from='.distignore' . /path/to/newspack-e2e-tests/wordpress/wp-content/plugins/newspack-plugin`
