@@ -27,8 +27,11 @@ function install_plugin() {
       log "Installing Newspack plugin: $PLUGIN_NAME"
 
       if [[ "$TEST_CHANNEL" == 'master' ]]; then
-        log $CIRCLE_API_TOKEN
-        MASTER_BUILD_ZIP=$(curl -X GET "https://circleci.com/api/v1.1/project/gh/Automattic/$PLUGIN_NAME/latest/artifacts?branch=master" -H "Circle-Token: $CIRCLE_API_TOKEN" | jq -r 'first .url')
+        # Long road to the latest artifacts on master.
+        LATEST_PIPELINE_ID=$(curl -s -X GET "https://circleci.com/api/v2/project/gh/Automattic/$PLUGIN_NAME/pipeline?branch=master" -H "Circle-Token: $CIRCLE_API_TOKEN" | jq -r '.items | first | .id')
+        LATEST_PIPELINE_WORKFLOW_ALL_ID=$(curl -s -X GET "https://circleci.com/api/v2/pipeline/$LATEST_PIPELINE_ID/workflow" -H "Circle-Token: $CIRCLE_API_TOKEN" | jq -r '.items[] | select(.name == "all") | .id')
+        LATEST_PIPELINE_WORKFLOW_DIST_BUILD_JOB_NUMBER=$(curl -s -X GET "https://circleci.com/api/v2/workflow/$LATEST_PIPELINE_WORKFLOW_ALL_ID/job" -H "Circle-Token: $CIRCLE_API_TOKEN" | jq -r '.items[] | select(.name == "newspack/build-distributable") | .job_number')
+        MASTER_BUILD_ZIP=$(curl -s -X GET "https://circleci.com/api/v2/project/gh/Automattic/$PLUGIN_NAME/$LATEST_PIPELINE_WORKFLOW_DIST_BUILD_JOB_NUMBER/artifacts" -H "Circle-Token: $CIRCLE_API_TOKEN" | jq -r '.items | first | .url')
         if [ "$MASTER_BUILD_ZIP" == "null" ]; then
           log "Can't find a distributable for master branch, latest release will be used."
         else
