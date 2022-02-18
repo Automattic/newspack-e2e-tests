@@ -21,6 +21,9 @@ commands:
           name: Create .env file from env vars
           command: printenv > ./scripts/.env
       - run:
+          name: Setup local SSL
+          command: sudo ./scripts/ssl.sh
+      - run:
           name: Waiting for MySQL to be ready
           command: |
             for i in `seq 1 20`;
@@ -31,7 +34,7 @@ commands:
             done
             echo Failed waiting for MySQL && exit 1
       - run:
-          name: Install necessary dependencies
+          name: Installing necessary dependencies
           command: |
             sudo apt-get update --allow-releaseinfo-change
             sudo apt-get install -y default-mysql-client
@@ -39,7 +42,13 @@ commands:
             sudo apt-get install -y php-mysqli
             sudo apt-get install -y jq
       - run:
-          name: Install wp-cli
+          name: Run stunnel for local HTTPS
+          command: |
+            sudo apt-get install -y stunnel
+            sudo stunnel ./docker/stunnel.conf
+          background: true
+      - run:
+          name: Installing wp-cli
           command: sudo ./scripts/install-wp-cli.sh
       - run:
           name: Download WordPress
@@ -65,7 +74,7 @@ commands:
             done
             echo Failed waiting for server && exit 1
       - run:
-          name: Install node dependencies
+          name: Installing node dependencies
           command: npm ci
       - run:
           name: E2E Tests with Cypress

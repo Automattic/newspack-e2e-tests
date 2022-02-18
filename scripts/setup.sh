@@ -5,7 +5,12 @@ source './scripts/.env'
 . ./scripts/install-wp-cli.sh
 . ./scripts/functions.sh
 
-URL="http://localhost:8000"
+# Unless on CI, set up SSL.
+if [[ -z "$CI" ]]; then
+  . ./scripts/ssl.sh
+fi
+
+URL="https://localhost"
 log "Site URL: $URL"
 wp core install --allow-root --url=$URL --title=NewspackE2E --admin_user=admin --admin_password=password --admin_email=newspacke2etesting@gmail.com
 VERSION=$(wp core version --allow-root)
@@ -21,7 +26,7 @@ TEST_CHANNEL="${TEST_CHANNEL:-stable}"
 log "Test channel is: $TEST_CHANNEL"
 
 # Installation during E2E tests is too brittle.
-log "Install and activate necessary plugins & the theme"
+log "Installing and activating necessary plugins & the theme"
 install_plugin newspack-plugin
 install_plugin newspack-blocks
 install_plugin newspack-newsletters
@@ -53,3 +58,19 @@ define( 'DB_PASSWORD', 'wordpress' );
 define( 'DB_NAME', 'wordpress' );
 define( 'DB_HOST', '$DB_HOST' );
 " > wp-content/newspack-popups-config.php
+
+log "Set up SSL"
+if [[ -v CI ]]; then
+  # on CI, where built-in PHP server is used, HTTPS has to be forced in this way to prevent
+  # a redirect loop on /wp-admin.
+  # https://wordpress.org/support/article/administration-over-ssl/#using-a-reverse-proxy
+  # https://stackoverflow.com/a/31604002/3772847
+  wp config set FORCE_SSL_ADMIN true --allow-root
+  # add `$_SERVER['HTTPS']='on';` right after the line defining `FORCE_SSL_ADMIN`:
+  awk '1;/WP_DEBUG/{print "$_SERVER[\"HTTPS\"]=\"on\";"}' wp-config.php > wp-config-new.php && mv wp-config-new.php wp-config.php
+else
+  # Locally, SSL for wp-admin is already configured by the Docker image.
+  # SSL has to be turned on for the Apache server.
+  a2enmod ssl && a2ensite default-ssl.conf
+  service apache2 reload
+fi

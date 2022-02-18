@@ -22,11 +22,6 @@ function install_plugin() {
       log "Installing Newspack plugin: $PLUGIN_NAME"
 
       if [[ "$TEST_CHANNEL" == 'master' ]]; then
-        if [[ ! $(command -v jq) ]]; then
-          log "Install jq"
-          apt-get update && apt-get install -y jq
-        fi
-
         # Long road to the latest artifacts on master.
         LATEST_PIPELINE_ID=$(curl -s -X GET "https://circleci.com/api/v2/project/gh/Automattic/$PLUGIN_NAME/pipeline?branch=master" -H "Circle-Token: $CIRCLE_API_TOKEN" | jq -r '.items | first | .id')
         LATEST_PIPELINE_WORKFLOW_ALL_ID=$(curl -s -X GET "https://circleci.com/api/v2/pipeline/$LATEST_PIPELINE_ID/workflow" -H "Circle-Token: $CIRCLE_API_TOKEN" | jq -r '.items[] | select(.name == "all") | .id')
@@ -63,3 +58,8 @@ function install_plugin() {
     wp plugin activate $PLUGIN_NAME --allow-root
   fi
 }
+
+if [[ ! $(command -v jq) ]]; then
+  log "Installing jq"
+  apt-get update && apt-get install -y jq
+fi

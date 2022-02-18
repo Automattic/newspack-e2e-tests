@@ -30,5 +30,5 @@ Cypress.Commands.add("wpLogin", () => {
 });
 
 Cypress.Commands.add("visitWPURL", (route) => {
-  cy.visit(`http://localhost:8000${route || ""}`);
+  cy.visit(`https://localhost${route || ""}`);
 });

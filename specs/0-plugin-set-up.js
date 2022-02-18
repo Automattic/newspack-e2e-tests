@@ -3,7 +3,7 @@ describe("Set up Newspack plugin", () => {
     cy.wpLogin();
   });
 
-  it("Install Newspack", () => {
+  it("Installing Newspack", () => {
     cy.get("#adminmenu").contains("Newspack").click();
 
     cy.assertURLIncludes("/wp-admin/admin.php?page=newspack-setup-wizard");
@@ -44,13 +44,5 @@ describe("Set up Newspack plugin", () => {
 
     // Site title has been updated.
     cy.get("#wp-admin-bar-site-name").contains("End To End");
-  });
-
-  it("Set AMP to standard mode via Health Check Wizard", () => {
-    // On non-HTTPS site, the AMP plugin will start off in Reader Mode.
-    cy.contains("Health Check").click();
-    cy.contains("Configuration").click();
-    cy.contains("Repair").click();
-    cy.contains("AMP plugin is in standard mode.");
   });
 });

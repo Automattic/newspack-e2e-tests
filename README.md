@@ -58,4 +58,4 @@ _Note that Cypress UI will disappear momentarily when taking a screenshot._
 - After each test run, a video of the test will be stored in `artifacts/video`
 - Enter the WordPress docker container with `docker exec -it wordpress_local /bin/bash` - the WP CLI will be installed.
   - all `wp` commands have to be ran with `--allow-root` option
-- WP is available locally at `http://localhost:8000`
+- WP is available locally at `https://localhost`
