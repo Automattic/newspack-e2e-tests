@@ -1,18 +1,14 @@
 #!/bin/bash
 
+. ./scripts/functions.sh
+
 if [[ ! $(command -v mysql) ]]; then
-  printf "===========> Install mysql client\n"
+  log "Install mysql client"
   apt-get update && apt-get install -y default-mysql-client
 fi
 
-if [[ $1 == 'plugins' ]]; then
-  printf "\n===========> Remove all plugins\n"
-  wp plugin deactivate --allow-root --all
-  rm -rf wp-content/plugins/*
-fi
-
-printf "===========> Reset DB\n"
+log "Reset DB"
 wp db clean --yes --allow-root
 
-printf "===========> Re-run setup script \n"
+log "Re-run setup script "
 ./scripts/setup.sh

@@ -4,9 +4,9 @@
 
 `node`, `npm`, `docker`, `docker-compose` installed.
 
-## How to
+## Running the tests locally
 
-1. Start docker-compose: `$ docker-compose up`
+1. Start docker-compose: `$ docker-compose up --build`
 1. In a new terminal session, run setup script in the container: `$ npm run wp:setup`
 1. Start Cypress:
   - no UI, run headless - `$ npm run test:ci`
@@ -17,18 +17,6 @@
 Run `$ npm run wp:reset` to reset the WP DB and re-run setup script.
 
 For a real hard reset, stop the `docker-compose` process, remove containers (`docker-compose down --volumes`), and repeat the initial setup form above.
-
-### Testing channels
-
-There are three "testing channels" available, meaning three sources for the Newspack plugins:
-
-1. Stable releases channel – versions currently distributed on Github
-1. `master` branches channel – versions built from `master` branches
-1. `alpha` branches channel – versions currently distributed on Github as pre-releases
-
-The CI for this project should be configured to run tests periodically – after release days for the stable & `alpha` channels, and daily for `master` branches channel.
-
-The stable channel is the default. To use a different channel while developing tests locally, add `TEST_CHANNEL` variable in `scripts/.env`. If using `master` branches channel, a `CIRCLE_API_TOKEN` variable will also be needed, to fetch files from CI.
 
 ### Running tests against a local plugin version
 
@@ -41,7 +29,19 @@ _Pro tip: use [chokidar](https://www.npmjs.com/package/chokidar) to sync local r
 $ chokidar "." -c "rsync -a --exclude-from='.distignore' . /path/to/newspack-e2e-tests/wordpress/wp-content/plugins/newspack-plugin"
 ```
 
-### Visual regression testing
+## Testing channels
+
+There are three "testing channels" available, meaning three sources for the Newspack plugins:
+
+1. Stable releases channel – versions currently distributed on Github
+1. `master` branches channel – versions built from `master` branches
+1. `alpha` branches channel – versions currently distributed on Github as pre-releases
+
+The CI for this project should be configured to run tests periodically – after release days for the stable & `alpha` channels, and daily for `master` branches channel.
+
+The stable channel is the default. To use a different channel while developing tests locally, add `TEST_CHANNEL` variable in `scripts/.env`. If using `master` branches channel, a `CIRCLE_API_TOKEN` variable will also be needed, to fetch files from CI.
+
+## Visual regression testing
 
 After adding a new visual regression test, run `$ npm run test:visual:setup` to create the base images.
 

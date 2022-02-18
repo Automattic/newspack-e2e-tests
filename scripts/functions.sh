@@ -1,10 +1,5 @@
 #!/bin/bash
 
-if [[ ! $(command -v jq) ]]; then
-  printf "===========> Install jq\n"
-  apt-get update && apt-get install -y jq
-fi
-
 # Nice logging with color and timestamp.
 function log(){
   TYPE=${2:-ok}
@@ -27,6 +22,11 @@ function install_plugin() {
       log "Installing Newspack plugin: $PLUGIN_NAME"
 
       if [[ "$TEST_CHANNEL" == 'master' ]]; then
+        if [[ ! $(command -v jq) ]]; then
+          log "Install jq"
+          apt-get update && apt-get install -y jq
+        fi
+
         # Long road to the latest artifacts on master.
         LATEST_PIPELINE_ID=$(curl -s -X GET "https://circleci.com/api/v2/project/gh/Automattic/$PLUGIN_NAME/pipeline?branch=master" -H "Circle-Token: $CIRCLE_API_TOKEN" | jq -r '.items | first | .id')
         LATEST_PIPELINE_WORKFLOW_ALL_ID=$(curl -s -X GET "https://circleci.com/api/v2/pipeline/$LATEST_PIPELINE_ID/workflow" -H "Circle-Token: $CIRCLE_API_TOKEN" | jq -r '.items[] | select(.name == "all") | .id')
