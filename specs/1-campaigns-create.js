@@ -2,12 +2,7 @@ describe("Campaigns", () => {
   const promptContent = "Welcome to our site!";
 
   it("Visit the Campaigns wizard", () => {
-    cy.wpLogin();
-    cy.get("#adminmenu").contains("Newspack").click();
-    cy.contains("Campaigns").click();
-
-    // Wizard title.
-    cy.get("h1").contains("Campaigns");
+    cy.visitNewspackWizard("Campaigns");
   });
 
   it("Create a new prompt", () => {
@@ -30,9 +25,7 @@ describe("Campaigns", () => {
       .clear()
       .type("0", { force: true });
 
-    cy.contains("Publish").click();
-    cy.get(".editor-post-publish-panel").contains("Publish").click();
-    cy.contains("Post published");
+    cy.wpPublishPost();
     cy.contains("Log Out").click({ force: true });
   });
 
@@ -44,7 +37,5 @@ describe("Campaigns", () => {
     cy.get(".newspack-popup")
       .contains(promptContent, { timeout: 120000 })
       .should("be.visible");
-
-    cy.wait(3);
   });
 });

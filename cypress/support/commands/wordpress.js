@@ -30,5 +30,11 @@ Cypress.Commands.add("wpLogin", () => {
 });
 
 Cypress.Commands.add("visitWPURL", (route) => {
-  cy.visit(`https://localhost${route || ""}`);
+  cy.visit(`https://newspack-e2e.com${route || ""}`);
+});
+
+Cypress.Commands.add("wpPublishPost", (type = "Post") => {
+  cy.contains("Publish").click();
+  cy.get(".editor-post-publish-panel").contains("Publish").click();
+  cy.contains(`${type} published`, { timeout: 60000 });
 });

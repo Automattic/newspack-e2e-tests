@@ -10,7 +10,7 @@ if [[ -z "$CI" ]]; then
   . ./scripts/ssl.sh
 fi
 
-URL="https://localhost"
+URL="https://newspack-e2e.com"
 log "Site URL: $URL"
 wp core install --allow-root --url=$URL --title=NewspackE2E --admin_user=admin --admin_password=password --admin_email=newspacke2etesting@gmail.com
 VERSION=$(wp core version --allow-root)
@@ -44,6 +44,7 @@ fi
 
 log "Set WP config variables"
 wp config set WP_NEWSPACK_IS_E2E true --allow-root
+wp config set NEWSPACK_AMP_PLUS_ENABLED true --allow-root
 
 # DB host locally is db:3306, but on CircleCI it's 127.0.0.1
 DB_HOST='db:3306'
@@ -59,6 +60,10 @@ define( 'DB_NAME', 'wordpress' );
 define( 'DB_HOST', '$DB_HOST' );
 " > wp-content/newspack-popups-config.php
 
+# For some reason, it's not pretty by default.
+log "Set permalink structure"
+wp rewrite structure '/%year%/%monthnum%/%postname%/' --allow-root
+
 log "Set up SSL"
 if [[ -v CI ]]; then
   # on CI, where built-in PHP server is used, HTTPS has to be forced in this way to prevent
@@ -68,6 +73,9 @@ if [[ -v CI ]]; then
   wp config set FORCE_SSL_ADMIN true --allow-root
   # add `$_SERVER['HTTPS']='on';` right after the line defining `FORCE_SSL_ADMIN`:
   awk '1;/WP_DEBUG/{print "$_SERVER[\"HTTPS\"]=\"on\";"}' wp-config.php > wp-config-new.php && mv wp-config-new.php wp-config.php
+
+  # Add to hosts file on CI machine.
+  echo '127.0.0.1 newspack-e2e.com' | sudo tee -a /etc/hosts
 else
   # Locally, SSL for wp-admin is already configured by the Docker image.
   # SSL has to be turned on for the Apache server.

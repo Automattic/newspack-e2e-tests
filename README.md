@@ -6,6 +6,8 @@
 
 ## Running the tests locally
 
+1. Create a `scripts/.secrets` file, based on `secrets/.secrets-sample`
+1. Add `newspack-e2e.com` to hosts file (add a line with `127.0.0.1 newspack-e2e.com`)
 1. Start docker-compose: `$ docker-compose up --build`
 1. In a new terminal session, run setup script in the container: `$ npm run wp:setup`
 1. Start Cypress:
@@ -58,4 +60,4 @@ _Note that Cypress UI will disappear momentarily when taking a screenshot._
 - After each test run, a video of the test will be stored in `artifacts/video`
 - Enter the WordPress docker container with `docker exec -it wordpress_local /bin/bash` - the WP CLI will be installed.
   - all `wp` commands have to be ran with `--allow-root` option
-- WP is available locally at `https://localhost`
+- WP is available locally at `https://newspack-e2e.com`

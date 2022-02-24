@@ -23,6 +23,8 @@ Cypress.on("uncaught:exception", (err, runnable) => {
     "setting 'mejs'",
     "mejs is not defined",
     "mediaelementplayer",
+    // Appeared on admin pages.
+    "Failed to register a ServiceWorker for scope",
   ].filter((fragment) => err.message.includes(fragment));
   if (matchedErrors.length) {
     // Returning false here prevents Cypress from failing the test.

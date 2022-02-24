@@ -22,16 +22,16 @@ if [[ -v CI ]]; then
   CERTS_DIR="./docker/certs"
 fi
 
-if [ -f "$CERTS_DIR/localhost.pem" ]; then
+if [ -f "$CERTS_DIR/newspack-e2e.com.pem" ]; then
   log "Found SSL certificate in $CERTS_DIR"
 else
   log "Creating SSL certificate in $CERTS_DIR…"
 
-  # Create certificate for localhost.
+  # Create certificate for newspack-e2e.com.
   mkcert -install
-  mkcert localhost
+  mkcert newspack-e2e.com
 
   mkdir -p $CERTS_DIR
-  mv localhost.pem "$CERTS_DIR/localhost.pem"
-  mv localhost-key.pem "$CERTS_DIR/localhost-key.pem"
+  mv newspack-e2e.com.pem "$CERTS_DIR/newspack-e2e.com.pem"
+  mv newspack-e2e.com-key.pem "$CERTS_DIR/newspack-e2e.com-key.pem"
 fi
