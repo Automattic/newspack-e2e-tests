@@ -55,7 +55,7 @@ describe("Donations", () => {
     cy.visitWPURL("/support-our-publication/");
 
     cy.contains("Support our publication");
-    cy.contains("button", "Donate now!").click();
+    cy.contains("button", "Donate with card").click();
 
     const stripeIFrameSelector =
       "iframe[title='Secure card payment input frame']";
@@ -77,7 +77,7 @@ describe("Donations", () => {
     cy.fillInputByPlaceholder("Email", donorEmail);
     cy.fillInputByPlaceholder("Full Name", "Tester Testerson");
 
-    cy.contains("button", "Donate now!").click();
+    cy.contains("button", "Donate with card").click();
 
     cy.contains("Processing payment…");
 
