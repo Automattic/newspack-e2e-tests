@@ -6,3 +6,5 @@ wordpress
 cypress/snapshots/actual
 cypress/snapshots/diff
 artifacts
+
+scripts/.secrets

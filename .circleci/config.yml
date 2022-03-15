@@ -61,7 +61,7 @@ commands:
           command: sudo ./scripts/setup.sh
       - run:
           name: Launch server
-          command: wp server --port=8000 --allow-root
+          command: wp server --host=newspack-e2e.com --port=8000 --allow-root
           background: true
       - run:
           name: Waiting for server to be ready
@@ -109,7 +109,7 @@ workflows:
   test-stable-scheduled:
     triggers:
       - schedule:
-          cron: "0 7 * * 4" # Thursdays at 7am UTC / 2am EST / 11pm PST
+          cron: "0 7 * * 3" # Wednesdays at 7am UTC / 2am EST / 11pm PST
           filters:
             branches:
               only:
@@ -119,7 +119,7 @@ workflows:
   test-alpha-scheduled:
     triggers:
       - schedule:
-          cron: "0 7 * * 1" # Mondays at 7am UTC / 2am EST / 11pm PST
+          cron: "0 7 * * 5" # Fridays at 7am UTC / 2am EST / 11pm PST
           filters:
             branches:
               only:
