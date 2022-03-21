@@ -79,25 +79,34 @@ commands:
       - run:
           name: E2E Tests with Cypress
           command: npm run test:ci
+      - run:
+          name: Notify about failure
+          command: |
+            curl \
+              --data "{\"channel\":\"$SLACK_CHANNEL_ID\",\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"⚠️ E2E tests have failed for channel: \`$CIRCLE_JOB\`. Check <$CIRCLE_BUILD_URL|the test recordings> to verify.\"}}]}" \
+              -H "Content-type: application/json" \
+              -H "Authorization: Bearer $SLACK_AUTH_TOKEN" \
+              -X POST https://slack.com/api/chat.postMessage
+          when: on_fail
       - store_artifacts:
           path: artifacts
       - store_artifacts:
           path: cypress/snapshots
 
 jobs:
-  e2e-stable:
+  stable:
     executor: docker-wordpress
     environment:
       TEST_CHANNEL: stable
     steps:
       - e2e
-  e2e-alpha:
+  alpha:
     executor: docker-wordpress
     environment:
       TEST_CHANNEL: alpha
     steps:
       - e2e
-  e2e-master:
+  master:
     executor: docker-wordpress
     environment:
       TEST_CHANNEL: master
@@ -115,7 +124,7 @@ workflows:
               only:
                 - master
     jobs:
-      - e2e-stable
+      - stable
   test-alpha-scheduled:
     triggers:
       - schedule:
@@ -125,7 +134,7 @@ workflows:
               only:
                 - master
     jobs:
-      - e2e-alpha
+      - alpha
   test-master-scheduled:
     triggers:
       - schedule:
@@ -135,14 +144,14 @@ workflows:
               only:
                 - master
     jobs:
-      - e2e-master
+      - master
 
   test-stable:
     jobs:
-      - e2e-stable
+      - stable
   test-alpha:
     jobs:
-      - e2e-alpha
+      - alpha
   test-master:
     jobs:
-      - e2e-master
+      - master

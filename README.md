@@ -61,3 +61,7 @@ _Note that Cypress UI will disappear momentarily when taking a screenshot._
 - Enter the WordPress docker container with `docker exec -it wordpress_local /bin/bash` - the WP CLI will be installed.
   - all `wp` commands have to be ran with `--allow-root` option
 - WP is available locally at `https://newspack-e2e.com`
+
+## Slack notifications
+
+If `SLACK_CHANNEL_ID` and `SLACK_AUTH_TOKEN` environment variables are set on the CI environment, the selected Slack channel will be updated whenever a test suite fails.
