@@ -25,7 +25,6 @@
   "dependencies": {
     "cypress": "^9.4.1",
     "cypress-visual-regression": "^1.6.3",
-    "cypress-wait-until": "^1.7.2",
     "dotenv": "^16.0.0"
   }
 }

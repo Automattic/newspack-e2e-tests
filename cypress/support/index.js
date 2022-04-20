@@ -6,8 +6,6 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-import "cypress-wait-until";
-
 // Import commands
 import "./commands";
 
