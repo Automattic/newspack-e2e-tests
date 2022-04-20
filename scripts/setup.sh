@@ -37,6 +37,10 @@ install_plugin pwa
 install_plugin wordpress-seo
 install_plugin google-site-kit
 
+# Remove the dummy first post.
+wp post delete 1 --allow-root
+
+# Activate the special plugin.
 cp ./scripts/e2e-amendments.php ./wp-content/plugins
 wp plugin activate e2e-amendments --allow-root
 
