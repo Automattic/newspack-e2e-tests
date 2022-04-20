@@ -27,12 +27,19 @@ describe("Campaigns", () => {
       .clear()
       .type("0", { force: true });
 
+    // Display on posts only.
+    cy.contains("button", "Post Types").click();
+    cy.uncheckInput("Pages");
+
     cy.wpPublishPost();
     cy.contains("Log Out").click({ force: true });
   });
 
   it("Visit site as a non-logged-in user and observe the prompt in an article", () => {
     cy.visitWPURL("/");
+
+    // Expect not to see the prompt on the homepage.
+    cy.get(".newspack-popup").should("not.exist");
 
     cy.get(".entry-title a")
       .first()

@@ -5,7 +5,7 @@ import "./visual-regression";
 Cypress.Commands.add("selectOption", (label, value) => {
   cy.contains("label", label)
     .invoke("attr", "for")
-    .then((id) => cy.get(`#${id}`))
+    .then(id => cy.get(`#${id}`))
     .select(value);
 });
 
@@ -25,21 +25,30 @@ Cypress.Commands.add("fillInputByPlaceholder", (placeholder, value) => {
 });
 
 Cypress.Commands.add("verifyInputValue", (label, value) => {
-  cy.contains(label).siblings("input").should("have.value", value);
+  cy.contains(label)
+    .siblings("input")
+    .should("have.value", value);
 });
 
-Cypress.Commands.add("checkInput", (label) => {
+Cypress.Commands.add("checkInput", label => {
   cy.contains("label", label)
     .invoke("attr", "for")
-    .then((id) => cy.get(`#${id}`))
+    .then(id => cy.get(`#${id}`))
     .check();
 });
 
-Cypress.Commands.add("assertURLIncludes", (value) => {
+Cypress.Commands.add("uncheckInput", label => {
+  cy.contains("label", label)
+    .invoke("attr", "for")
+    .then(id => cy.get(`#${id}`))
+    .uncheck();
+});
+
+Cypress.Commands.add("assertURLIncludes", value => {
   cy.url().should("include", value);
 });
 
-Cypress.Commands.add("getIframe", (selector) => {
+Cypress.Commands.add("getIframe", selector => {
   cy.get(selector)
     .its("0.contentDocument.body")
     .should("not.be.empty")
