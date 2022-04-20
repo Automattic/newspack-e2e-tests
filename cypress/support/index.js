@@ -13,7 +13,7 @@ import "./commands";
 
 // preserve all cookies
 Cypress.Cookies.defaults({
-  preserve: /\.*/,
+  preserve: /\.*/
 });
 
 Cypress.on("uncaught:exception", (err, runnable) => {
@@ -24,8 +24,8 @@ Cypress.on("uncaught:exception", (err, runnable) => {
     "mejs is not defined",
     "mediaelementplayer",
     // Appeared on admin pages.
-    "Failed to register a ServiceWorker for scope",
-  ].filter((fragment) => err.message.includes(fragment));
+    "Failed to register a ServiceWorker for scope"
+  ].filter(fragment => err.message.includes(fragment));
   if (matchedErrors.length) {
     // Returning false here prevents Cypress from failing the test.
     return false;

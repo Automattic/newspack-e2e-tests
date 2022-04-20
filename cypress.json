@@ -1,7 +1,6 @@
 {
   "baseUrl": "https://newspack-e2e.com/",
   "integrationFolder": "specs",
-  "screenshotsFolder": "artifacts/screenshots",
   "videosFolder": "artifacts/videos",
   "screenshotsFolder": "cypress/snapshots/actual",
   "trashAssetsBeforeRuns": true,

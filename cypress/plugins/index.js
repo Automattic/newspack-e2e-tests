@@ -15,7 +15,7 @@ if (fs.existsSync("./scripts/.secrets")) {
 const getCompareSnapshotsPlugin = require("cypress-visual-regression/dist/plugin");
 
 module.exports = (on, config) => {
-  getCompareSnapshotsPlugin(on);
+  getCompareSnapshotsPlugin(on, config);
 
   config.env = { ...config.env, ...envVariables };
   return config;

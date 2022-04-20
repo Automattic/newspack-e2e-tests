@@ -5,10 +5,12 @@ compareSnapshotCommand();
 // take a visual regression screenshot only
 Cypress.Commands.add(
   "compareVisualRegressionScreenshot",
-  (element, screenshotName) => {
+  (screenshotName, { viewport = "macbook-13", element = "body" } = {}) => {
     if (Cypress.env("type")) {
+      cy.viewport(viewport);
+
       Cypress.$("#wpadminbar").hide();
-      cy.get(element).compareSnapshot(screenshotName);
+      cy.get(element).compareSnapshot(screenshotName, 0.1);
     }
   }
 );

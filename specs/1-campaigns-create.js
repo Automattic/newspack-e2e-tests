@@ -14,7 +14,9 @@ describe("Campaigns", () => {
     cy.wpDismissBlockEditorIntro();
 
     cy.get('[aria-label="Add title"]').type("Welcome prompt");
-    cy.get('[aria-label="Add block"]').first().type(promptContent);
+    cy.get('[aria-label="Add block"]')
+      .first()
+      .type(promptContent);
 
     // Set the prompt to display at 0% depth.
     cy.contains("button", "Prompt").click();
@@ -32,10 +34,20 @@ describe("Campaigns", () => {
   it("Visit site as a non-logged-in user and observe the prompt in an article", () => {
     cy.visitWPURL("/");
 
-    cy.get(".entry-title a").first().click();
+    cy.get(".entry-title a")
+      .first()
+      .click();
 
     cy.get(".newspack-popup")
       .contains(promptContent, { timeout: 120000 })
       .should("be.visible");
+
+    cy.compareVisualRegressionScreenshot(`prompt`, {
+      element: ".entry-content"
+    });
+    cy.compareVisualRegressionScreenshot(`prompt--phone`, {
+      element: ".entry-content",
+      viewport: "iphone-6"
+    });
   });
 });

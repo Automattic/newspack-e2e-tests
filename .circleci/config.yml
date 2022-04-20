@@ -78,7 +78,7 @@ commands:
           command: npm ci
       - run:
           name: E2E Tests with Cypress
-          command: npm run test:ci
+          command: npm run test:visual:check
       - run:
           name: Notify about failure
           command: |

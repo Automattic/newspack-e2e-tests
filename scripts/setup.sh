@@ -37,6 +37,9 @@ install_plugin pwa
 install_plugin wordpress-seo
 install_plugin google-site-kit
 
+cp ./scripts/e2e-amendments.php ./wp-content/plugins
+wp plugin activate e2e-amendments --allow-root
+
 wp theme is-installed newspack-theme --allow-root
 if [[ $? == 1 ]]; then
   wp theme install https://github.com/Automattic/newspack-theme/releases/latest/download/newspack-theme.zip --force --allow-root

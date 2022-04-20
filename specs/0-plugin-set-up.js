@@ -4,7 +4,9 @@ describe("Set up Newspack plugin", () => {
   });
 
   it("Installing Newspack", () => {
-    cy.get("#adminmenu").contains("Newspack").click();
+    cy.get("#adminmenu")
+      .contains("Newspack")
+      .click();
 
     cy.assertURLIncludes("/wp-admin/admin.php?page=newspack-setup-wizard");
     cy.wpDismissPointers();

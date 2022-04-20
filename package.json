@@ -5,7 +5,8 @@
   "scripts": {
     "test": "cypress open",
     "test:ci": "cypress run",
-    "test:visual:setup": "cypress run --browser electron --env type=base --config screenshotsFolder=cypress/snapshots/base",
+    "test:visual:setup": "cypress run --browser electron --env type=base --config screenshotsFolder=cypress/snapshots/base && npm run snapshots-files-cleanup",
+    "snapshots-files-cleanup": "rm -rf cypress/snapshots/base/*/*-base-*.png",
     "test:visual:check": "cypress run --browser electron --env type=actual",
     "wp:copy-scripts": "cp -r ./scripts ./wordpress",
     "wp:setup": "npm run wp:copy-scripts && docker exec wordpress_local ./scripts/setup.sh",
