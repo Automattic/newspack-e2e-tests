@@ -82,11 +82,14 @@ commands:
       - run:
           name: Notify about failure
           command: |
-            curl \
-              --data "{\"channel\":\"$SLACK_CHANNEL_ID\",\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"⚠️ E2E tests have failed for channel: \`$CIRCLE_JOB\`. Check <$CIRCLE_BUILD_URL|the test recordings> to verify.\"}}]}" \
-              -H "Content-type: application/json" \
-              -H "Authorization: Bearer $SLACK_AUTH_TOKEN" \
-              -X POST https://slack.com/api/chat.postMessage
+            CURRENT_GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+            if [[ "$CURRENT_GIT_BRANCH" == "master" ]]; then
+              curl \
+                --data "{\"channel\":\"$SLACK_CHANNEL_ID\",\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"⚠️ E2E tests have failed for channel: \`$CIRCLE_JOB\`. Check <$CIRCLE_BUILD_URL|the artifacts> to verify.\"}}]}" \
+                -H "Content-type: application/json" \
+                -H "Authorization: Bearer $SLACK_AUTH_TOKEN" \
+                -X POST https://slack.com/api/chat.postMessage
+            fi
           when: on_fail
       - store_artifacts:
           path: artifacts
