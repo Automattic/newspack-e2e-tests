@@ -45,6 +45,8 @@ The stable channel is the default. To use a different channel while developing t
 
 ## Visual regression testing
 
+_Not ready yet for running on CI. Due to font differences the results fail._
+
 After adding a new visual regression test, run `$ npm run test:visual:setup` to create the base images.
 
 To check for visual regressions, run `$ npm run test:visual:check`.
