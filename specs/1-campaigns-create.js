@@ -48,13 +48,5 @@ describe("Campaigns", () => {
     cy.get(".newspack-popup")
       .contains(promptContent, { timeout: 120000 })
       .should("be.visible");
-
-    cy.compareVisualRegressionScreenshot(`prompt`, {
-      element: ".entry-content"
-    });
-    cy.compareVisualRegressionScreenshot(`prompt--phone`, {
-      element: ".entry-content",
-      viewport: "iphone-6"
-    });
   });
 });
