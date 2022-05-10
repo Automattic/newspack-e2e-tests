@@ -1,4 +1,4 @@
-import { tagline, facebookURL } from "./0-plugin-set-up";
+import { tagline, facebookURL } from "../cypress/support/consts";
 
 const copyrightText = "All material here is semi-random.";
 

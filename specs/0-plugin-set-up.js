@@ -1,5 +1,4 @@
-export const tagline = "All the news";
-export const facebookURL = "https://facebook.com/e2e";
+import { tagline, facebookURL } from "../cypress/support/consts";
 
 describe("Set up Newspack plugin", () => {
   it("Log in to WordPress admin", () => {
