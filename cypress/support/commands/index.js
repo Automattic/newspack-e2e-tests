@@ -17,6 +17,18 @@ Cypress.Commands.add("fillInput", (label, value) => {
     .should("have.value", value);
 });
 
+Cypress.Commands.add("fillColorInput", (orignalHex, newHex) => {
+  cy.contains(`#${orignalHex}`)
+    .click()
+    .get('[aria-label="Show detailed inputs"]')
+    .click();
+  cy.get(`input[value="${orignalHex.toUpperCase()}"]`)
+    .clear()
+    .type(newHex)
+    .should("have.value", newHex);
+  cy.contains(`#${newHex.toLowerCase()}`).click();
+});
+
 Cypress.Commands.add("fillInputByPlaceholder", (placeholder, value) => {
   cy.get(`input[placeholder="${placeholder}"]`)
     .clear()

@@ -1,3 +1,6 @@
+export const tagline = "All the news";
+export const facebookURL = "https://facebook.com/e2e";
+
 describe("Set up Newspack plugin", () => {
   it("Log in to WordPress admin", () => {
     cy.wpLogin();
@@ -24,6 +27,8 @@ describe("Set up Newspack plugin", () => {
   it("Configure Newspack", () => {
     cy.assertURLIncludes("newspack-setup-wizard#/settings");
     cy.fillInput("Site Title", "End To End");
+    cy.fillInput("Tagline", tagline);
+    cy.fillInput("Facebook Page", facebookURL);
     cy.contains("Continue").click();
     cy.assertURLIncludes("newspack-setup-wizard#/services");
     cy.contains("Continue").click();
