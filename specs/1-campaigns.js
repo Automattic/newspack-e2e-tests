@@ -15,7 +15,7 @@ describe("Campaigns", () => {
     cy.wpDismissBlockEditorIntro();
 
     cy.get('[aria-label="Add title"]').type("Welcome prompt");
-    cy.get('[aria-label="Add block"]')
+    cy.get('[aria-label="Add default block"]')
       .first()
       .type(welcomePromptContent);
 
@@ -43,7 +43,7 @@ describe("Campaigns", () => {
     cy.wpDismissBlockEditorIntro();
 
     cy.get('[aria-label="Add title"]').type("One-time prompt");
-    cy.get('[aria-label="Add block"]')
+    cy.get('[aria-label="Add default block"]')
       .first()
       .type(oneTimePromptContent);
     // Set the prompt to display only once.
