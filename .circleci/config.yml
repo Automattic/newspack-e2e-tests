@@ -19,7 +19,7 @@ commands:
           at: ~/
       - run:
           name: Create .env file from env vars
-          command: printenv > ./scripts/.env
+          command: printenv >> ./scripts/.env
       - run:
           name: Setup local SSL
           command: sudo ./scripts/ssl.sh

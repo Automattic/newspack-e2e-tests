@@ -14,6 +14,7 @@ URL="https://newspack-e2e.com"
 log "Site URL: $URL"
 wp core install --allow-root --url=$URL --title=NewspackE2E --admin_user=admin --admin_password=password --admin_email=newspacke2etesting@gmail.com
 VERSION=$(wp core version --allow-root)
+log "Desired version is: $WP_VERSION"
 if [[ $WP_VERSION && $VERSION != $WP_VERSION ]]; then
   log "Update WP version to $WP_VERSION"
   wp core update --version=$WP_VERSION --allow-root --force
