@@ -17,6 +17,15 @@ Cypress.Commands.add("fillInput", (label, value) => {
     .should("have.value", value);
 });
 
+Cypress.Commands.add("fillMoneyInput", (label, value) => {
+  cy.get('[data-wp-component="VisuallyHidden"]')
+    .contains(label)
+    .siblings("input")
+    .clear()
+    .type(value)
+    .should("have.value", value);
+});
+
 Cypress.Commands.add("fillColorInput", (orignalHex, newHex) => {
   cy.contains(`#${orignalHex}`)
     .click()
@@ -36,8 +45,9 @@ Cypress.Commands.add("fillInputByPlaceholder", (placeholder, value) => {
     .should("have.value", value);
 });
 
-Cypress.Commands.add("verifyInputValue", (label, value) => {
-  cy.contains(label)
+Cypress.Commands.add("verifyMoneyInputValue", (label, value) => {
+  cy.get('[data-wp-component="VisuallyHidden"]')
+    .contains(label)
     .siblings("input")
     .should("have.value", value);
 });

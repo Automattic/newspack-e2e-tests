@@ -7,10 +7,10 @@ describe("Campaigns", () => {
   });
 
   it("Create a simple inline prompt", () => {
-    cy.get('[aria-label="Add New Prompt"]').click();
+    cy.contains("Add New Prompt").click();
     // New prompt modal title.
     cy.get("h1").contains("Add New Prompt");
-    cy.contains(".title", "Inline").click();
+    cy.contains("Inline").click();
 
     cy.wpDismissBlockEditorIntro();
 
@@ -37,8 +37,8 @@ describe("Campaigns", () => {
 
   it("Create a one-time prompt", () => {
     cy.visitNewspackWizard("Campaigns", { direct: true });
-    cy.get('[aria-label="Add New Prompt"]').click();
-    cy.contains(".title", "Center Overlay").click();
+    cy.contains("Add New Prompt").click();
+    cy.contains("Center Overlay").click();
 
     cy.wpDismissBlockEditorIntro();
 

@@ -41,7 +41,7 @@ describe("Set up Newspack plugin", () => {
 
   it("Go to dashboard", () => {
     cy.assertURLIncludes("newspack-setup-wizard#/completed");
-    cy.contains("Go to Dashboard").click();
+    cy.contains("Go to the Dashboard").click();
 
     // Wizards are here.
     cy.contains("Site Design");

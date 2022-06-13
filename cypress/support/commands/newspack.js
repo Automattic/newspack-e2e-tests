@@ -10,9 +10,6 @@ Cypress.Commands.add(
         .contains("Newspack")
         .click();
       cy.contains(wizardTitle).click();
-
-      // Wizard title.
-      cy.get("h1").contains(wizardTitle);
     }
   }
 );

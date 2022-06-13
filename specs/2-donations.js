@@ -29,19 +29,19 @@ describe("Donations", () => {
     cy.contains(
       "Your donations landing page has been created, but is not yet published."
     );
-    cy.verifyInputValue("Suggested donation amount per month", "15");
+    cy.verifyMoneyInputValue("Suggested donation amount per month", "15");
     cy.checkInput("Set exact monthly donation tiers");
-    cy.verifyInputValue("Low-tier", "7");
-    cy.fillInput("Low-tier", "2");
-    cy.verifyInputValue("Mid-tier", "15");
-    cy.fillInput("Mid-tier", "21");
-    cy.verifyInputValue("High-tier", "30");
-    cy.fillInput("High-tier", "42");
+    cy.verifyMoneyInputValue("Low-tier", "7");
+    cy.fillMoneyInput("Low-tier", "2");
+    cy.verifyMoneyInputValue("Mid-tier", "15");
+    cy.fillMoneyInput("Mid-tier", "21");
+    cy.verifyMoneyInputValue("High-tier", "30");
+    cy.fillMoneyInput("High-tier", "42");
 
     cy.contains("Save Settings").click();
-    cy.verifyInputValue("Low-tier", "2");
-    cy.verifyInputValue("Mid-tier", "21");
-    cy.verifyInputValue("High-tier", "42");
+    cy.verifyMoneyInputValue("Low-tier", "2");
+    cy.verifyMoneyInputValue("Mid-tier", "21");
+    cy.verifyMoneyInputValue("High-tier", "42");
   });
 
   it("Configure donations page", () => {
