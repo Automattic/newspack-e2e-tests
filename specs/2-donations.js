@@ -30,22 +30,21 @@ describe("Donations", () => {
       "Your donations landing page has been created, but is not yet published."
     );
     cy.verifyMoneyInputValue("Suggested donation amount per month", "15");
-    cy.checkInput("Set exact monthly donation tiers");
-    cy.verifyMoneyInputValue("Low-tier", "7");
-    cy.fillMoneyInput("Low-tier", "2");
-    cy.verifyMoneyInputValue("Mid-tier", "15");
-    cy.fillMoneyInput("Mid-tier", "21");
-    cy.verifyMoneyInputValue("High-tier", "30");
-    cy.fillMoneyInput("High-tier", "42");
+    cy.verifyMoneyInputValue("Suggested one-time donation amount", "20");
+    cy.fillMoneyInput("Suggested one-time donation amount", "2");
+    cy.verifyMoneyInputValue("Suggested donation amount per month", "15");
+    cy.fillMoneyInput("Suggested donation amount per month", "21");
+    cy.verifyMoneyInputValue("Suggested donation amount per year", "180");
+    cy.fillMoneyInput("Suggested donation amount per year", "42");
 
     cy.contains("Save Settings").click();
-    cy.verifyMoneyInputValue("Low-tier", "2");
-    cy.verifyMoneyInputValue("Mid-tier", "21");
-    cy.verifyMoneyInputValue("High-tier", "42");
+    cy.verifyMoneyInputValue("Suggested one-time donation amount", "2");
+    cy.verifyMoneyInputValue("Suggested donation amount per month", "21");
+    cy.verifyMoneyInputValue("Suggested donation amount per year", "42");
   });
 
   it("Configure donations page", () => {
-    cy.contains("a", "Edit Page").click();
+    cy.contains("Edit Page").click();
     cy.wpDismissBlockEditorIntro();
     cy.wpPublishPost("Page");
     cy.contains("Log Out").click({ force: true });
