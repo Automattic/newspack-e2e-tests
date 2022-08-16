@@ -22,6 +22,9 @@ else
   log "WP version is $VERSION"
 fi
 
+# Prevent "Update WordPress Database" from messing up the test scenarios.
+wp core update-db --allow-root
+
 TEST_CHANNEL="${TEST_CHANNEL:-stable}"
 
 log "Test channel is: $TEST_CHANNEL"
