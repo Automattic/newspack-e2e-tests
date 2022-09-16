@@ -7,8 +7,12 @@ if [[ ! $(command -v mysql) ]]; then
   apt-get update && apt-get install -y default-mysql-client
 fi
 
-log "Reset DB"
+log "Resetting the DB"
 wp db clean --yes --allow-root
 
-log "Re-run setup script "
+log "Remove plugins & themes"
+rm -rf ./wp-content/plugins/*
+rm -rf ./wp-content/themes/*
+
+log "Re-running setup script "
 ./scripts/setup.sh
