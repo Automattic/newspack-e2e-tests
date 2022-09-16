@@ -19,7 +19,7 @@ function install_plugin() {
   wp plugin is-installed $PLUGIN_NAME --allow-root
   if [[ $? == 1 ]]; then
     if [[ "$PLUGIN_NAME" =~ ^newspack-* ]]; then
-      log "Installing Newspack plugin: $PLUGIN_NAME"
+      log "Installing Newspack plugin: $PLUGIN_NAME (from Github)"
 
       if [[ "$TEST_CHANNEL" == 'master' ]]; then
         # Long road to the latest artifacts on master.
@@ -49,13 +49,15 @@ function install_plugin() {
         wp plugin install https://github.com/Automattic/$PLUGIN_NAME/releases/latest/download/$PLUGIN_NAME.zip --force --allow-root
       fi
     else
-      log "Installing $PLUGIN_NAME"
+      log "Installing $PLUGIN_NAME (from WPORG)"
       wp plugin install $PLUGIN_NAME --force --allow-root
     fi
   fi
+  wp plugin activate $PLUGIN_NAME --allow-root
   wp plugin is-active $PLUGIN_NAME --allow-root
   if [[ $? == 1 ]]; then
-    wp plugin activate $PLUGIN_NAME --allow-root
+    log "Could not activate plugin $PLUGIN_NAME" error
+    exit 1
   fi
 }
 
