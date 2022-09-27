@@ -21,7 +21,7 @@ describe("Campaigns", () => {
 
     // Set the prompt to display at 0% depth.
     cy.contains("button", "Prompt").click();
-    cy.contains("button", "Prompt Settings").click();
+    cy.contains("button", "Settings").click();
     cy.get(
       'input[type="number"][aria-label="Approximate Position (in percent)"]'
     )
@@ -48,7 +48,7 @@ describe("Campaigns", () => {
       .type(oneTimePromptContent);
     // Set the prompt to display only once.
     cy.contains("button", "Prompt").click();
-    cy.contains("button", "Frequency Settings").click();
+    cy.contains("button", "Frequency").click();
     cy.selectOption("Frequency", "once");
 
     cy.wpPublishPost();
@@ -65,9 +65,7 @@ describe("Campaigns", () => {
     // Expect not to see the inline prompt on the homepage.
     cy.contains(welcomePromptContent).should("not.exist");
 
-    cy.get(".entry-title a")
-      .first()
-      .click();
+    cy.get(".entry-title a").first().click();
 
     cy.contains(oneTimePromptContent, { timeout: 120000 }).should(
       "not.be.visible"
