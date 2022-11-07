@@ -1,4 +1,14 @@
 version: 2.1
+parameters:
+  run_workflow_stable:
+    default: true
+    type: boolean
+  run_workflow_alpha:
+    default: true
+    type: boolean
+  run_workflow_master:
+    default: true
+    type: boolean
 
 executors:
   docker-wordpress:
@@ -150,11 +160,14 @@ workflows:
       - master
 
   test-stable:
+    when: << pipeline.parameters.run_workflow_stable >>
     jobs:
       - stable
   test-alpha:
+    when: << pipeline.parameters.run_workflow_alpha >>
     jobs:
       - alpha
   test-master:
+    when: << pipeline.parameters.run_workflow_master >>
     jobs:
       - master
