@@ -12,13 +12,14 @@ describe("Donations", () => {
     cy.selectOption("Select Reader Revenue Platform", "stripe");
     cy.contains("a", "Stripe Settings").click();
 
-    // Warning is shown initially.
-    cy.contains("Stripe secret key not provided.");
+    cy.contains("Save Settings").click();
+    // Warning is shown if incomplete settings are saved.
+    cy.contains("Publishable Key and Secret Key are required to use Stripe.");
 
     // Set Stripe credentials.
     cy.checkInput("Use Stripe in test mode");
-    cy.fillInput("Publishable Key", Cypress.env("STRIPE_PUBLISHABLE_KEY"));
-    cy.fillInput("Secret Key", Cypress.env("STRIPE_SECRET_KEY"));
+    cy.fillInput("Test Publishable Key", Cypress.env("STRIPE_PUBLISHABLE_KEY"));
+    cy.fillInput("Test Secret Key", Cypress.env("STRIPE_SECRET_KEY"));
 
     cy.contains("Save Settings").click();
   });
