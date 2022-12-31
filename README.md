@@ -67,3 +67,4 @@ _Note that Cypress UI will disappear momentarily when taking a screenshot._
 ## Slack notifications
 
 If `SLACK_CHANNEL_ID` and `SLACK_AUTH_TOKEN` environment variables are set on the CI environment, the selected Slack channel will be updated whenever a test suite fails.
+test
