@@ -8,3 +8,4 @@ cypress/snapshots/diff
 artifacts
 
 scripts/.secrets
+.git/
