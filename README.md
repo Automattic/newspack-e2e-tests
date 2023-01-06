@@ -41,7 +41,7 @@ There are three "testing channels" available, meaning three sources for the News
 
 The CI for this project should be configured to run tests periodically – after release days for the stable & `alpha` channels, and daily for `master` branches channel.
 
-The stable channel is the default. To use a different channel while developing tests locally, add `TEST_CHANNEL` variable in `scripts/.env`. If using `master` branches channel, a `CIRCLE_API_TOKEN` variable will also be needed, to fetch files from CI.
+The stable channel is the default. To use a different channel while developing tests locally, add `TEST_CHANNEL` variable in `scripts/.env`.
 
 ## Visual regression testing
 
