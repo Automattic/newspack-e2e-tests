@@ -10,7 +10,7 @@ Cypress.Commands.add("wpDismissPointers", () => {
 Cypress.Commands.add("wpDismissBlockEditorIntro", () => {
   const selector = '[aria-label="Welcome to the block editor"]';
   cy.get(selector)
-    .get('[aria-label="Close dialog"]')
+    .get('[aria-label="Close"]')
     .click();
 });
 
