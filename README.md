@@ -1,6 +1,6 @@
 # Newspack end-to-end testing
 
-Is run with Playwright.
+🎥 See the latest test report at https://automattic.github.io/newspack-e2e-tests.
 
 ## Setting up a test site (CI or local)
 
@@ -37,8 +37,7 @@ Will need a publicly accessible (or at least accessible for the CI server) test 
    4. `SSH_KNOWN_HOST` - this you can get by connecting to the platform and copying the line added to the `/root/.ssh/known_hosts` file
    5. `GITHUB_COMMITER_EMAIL`, `GIT_COMMITTER_NAME`, `GITHUB_TOKEN` – for GH pages deployment
    6. `SLACK_AUTH_TOKEN`, `SLACK_CHANNEL_ID` – for Slack notifications
-
-2. Follow the "Setting up a test site" instructions from this doc.
+1. Follow the "Setting up a test site" instructions from this doc.
 
 ## Writing tests
 
