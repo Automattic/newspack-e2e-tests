@@ -22,6 +22,7 @@ Then, follow the "Setting up a test site" instructions from this doc.
    - run `npm t` for a single test run
    - run `npm run test:ui` for a test run with UI
    - run `npm run codegen -- <site-url>` for a test code generation UI
+   - run the `e2e-reset.sh` script in the docker container to clean up after a test run
 
 ## CI testing
 
