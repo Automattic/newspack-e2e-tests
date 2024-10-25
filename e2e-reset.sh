@@ -17,6 +17,14 @@ echo "Removing saved emails…"
 wp --allow-root --skip-plugins --skip-themes post delete $(wp --allow-root --skip-plugins --skip-themes post list --post_type=email_log --format=ids) --force || true
 
 echo ""
+echo "Removing test users…"
+wp --allow-root --skip-plugins --skip-themes user delete $(wp --allow-root --skip-plugins --skip-themes user list --field=ID | grep -v 1) --yes || true
+
+echo ""
+echo "Setting the site title…"
+wp --allow-root --skip-plugins --skip-themes option update blogname "The Daily Test"
+
+echo ""
 echo "Selective resetting for E2E tests…"
 
 echo ""
