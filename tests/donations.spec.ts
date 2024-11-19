@@ -33,7 +33,7 @@ test("Donations", async ({ page }) => {
     .getByPlaceholder("1234 1234 1234 1234")
     .fill("4242 4242 4242 42424");
   await getStripeIframe(page).getByPlaceholder("MM / YY").fill("04 / 44");
-  await getStripeIframe(page).getByPlaceholder("CVC").fill("333");
+  await getStripeIframe(page).getByLabel("Security code").fill("333");
 
   // Depending on geo, Stripe may want a ZIP code, too.
   const zipLocator = await getStripeIframe(page).getByPlaceholder("12345");
