@@ -19,11 +19,17 @@ test("Register on the site", async ({ page }) => {
    */
   await page.goto("/");
   await page.getByRole("link", { name: "Sign In" }).click();
-  await page.getByRole("link", { name: "I don't have an account" }).click();
+  await page.getByRole("button", { name: "Create an account" }).click();
+  await page.getByPlaceholder("Your email address", { exact: true }).click();
   await page
-    .getByRole("textbox", { name: "Enter your email address" })
+    .getByPlaceholder("Your email address", { exact: true })
     .fill(emailAddress);
-  await page.getByRole("button", { name: "Sign up" }).click();
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page.getByRole("strong")).toContainText(
+    "Success! Your account was created and you’re signed in."
+  );
+  await page.getByRole("link", { name: "Continue" }).click();
+  await page.getByRole("link", { name: "My Account" }).click();
   await page.waitForURL(/my-account/);
   await page.getByText("Log out").click();
 
@@ -33,17 +39,19 @@ test("Register on the site", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("link", { name: "Sign In" }).click();
   await page
-    .getByRole("textbox", { name: "Enter your email address" })
+    .getByPlaceholder("Your email address", { exact: true })
     .fill(emailAddress);
-  await page.getByRole("button", { name: "Send authorization code" }).click();
-  await expect(page.getByText("Enter the code you received")).toBeVisible();
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page.getByLabel("Sign in").locator("form")).toContainText(
+    "Enter the code sent to your email."
+  );
 
   /**
    * Go to the email client to get the log in link.
    */
   await goToEmailClient(page, emailAddress);
-  await page.getByText(`Authorization code (${emailAddress}`).click();
-  await clickLinkURL(page, "Log in");
+  await page.getByText(`Sign in (${emailAddress}`).click();
+  await clickLinkURL(page, "Continue to");
 
   /**
    * Now the user is authenticated via the magic link, they can update their name.
@@ -68,7 +76,7 @@ test("Register on the site", async ({ page }) => {
   ).toBeVisible();
   await goToEmailClient(page, emailAddress);
   await page.getByText(`Set a new password (${emailAddress}`).click();
-  await clickLinkURL(page, "Set new password");
+  await clickLinkURL(page, "Set password");
 
   const password = randomString(14);
   await page
@@ -76,19 +84,28 @@ test("Register on the site", async ({ page }) => {
     .fill(password);
   await page.getByLabel("Re-enter new password *").fill(password);
   await page.getByRole("button", { name: "Save" }).click();
-  await expect(page.getByText("Your password has been reset")).toBeVisible();
+  await page.getByText("Log out").click();
 
   /**
    * Reader logs in using the password.
    */
+  await page.goto("/");
   await page.getByRole("link", { name: "Sign In", exact: true }).click();
   await page
-    .getByRole("link", { name: "sign in using a password" })
-    .nth(1)
-    .click();
-  await page
-    .getByRole("textbox", { name: "Enter your password" })
-    .fill(password);
-  await page.getByRole("button", { name: "Sign in" }).click();
+    .getByPlaceholder("Your email address", { exact: true })
+    .fill(emailAddress);
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.getByLabel("Enter your password").fill("not the password");
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page.getByLabel("Sign in").locator("form")).toContainText(
+    "Password not recognized, try again."
+  );
+  await page.getByLabel("Enter your password").fill(password);
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page.getByRole("strong")).toContainText(
+    "Success! You’re signed in."
+  );
+  await page.getByRole("link", { name: "Continue" }).click();
+  await page.getByRole("link", { name: "My Account" }).click();
   await page.waitForURL(/my-account/);
 });
