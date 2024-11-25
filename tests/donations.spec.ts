@@ -4,7 +4,7 @@ import { test, expect } from "@playwright/test";
 import { randomEmailAddress } from "./utils";
 
 const getPageInIframe = (page) =>
-  page.frameLocator('iframe[name="newspack_modal_checkout"]');
+  page.frameLocator('iframe[name="newspack_modal_checkout_iframe"]');
 
 const getStripeIframe = (page) =>
   getPageInIframe(page).frameLocator(`[title="Secure payment input frame"]`);
@@ -17,12 +17,14 @@ test("Donations", async ({ page }) => {
    */
   await page.goto("/support-our-publication/");
   await page.getByRole("button", { name: "Donate Now" }).click();
-  await expect(getPageInIframe(page).getByRole("strong")).toContainText(
-    "Donate: Monthly"
-  );
+  await expect(
+    getPageInIframe(page).locator(
+      'strong:has-text("Donate: Monthly: $15.00 / month")'
+    )
+  ).toBeVisible();
+  await getPageInIframe(page).getByLabel("Email address *").fill(emailAddress);
   await getPageInIframe(page).getByLabel("First name *").fill("John");
   await getPageInIframe(page).getByLabel("Last name *").fill("Doe");
-  await getPageInIframe(page).getByLabel("Email address *").fill(emailAddress);
 
   // HACK: till https://github.com/Automattic/newspack-blocks/pull/1921 is deployed.
   await page.waitForTimeout(2000);
@@ -46,19 +48,20 @@ test("Donations", async ({ page }) => {
     .click();
 
   await expect(
-    getPageInIframe(page).getByRole("heading", {
-      name: "Transaction Successful",
-    })
+    page.getByRole("heading", { name: "Transaction successful" })
   ).toBeVisible();
-  await getPageInIframe(page).getByText("Continue browsing").click();
 
-  await expect(page.getByRole("link", { name: "Close" })).not.toBeVisible();
+  await expect(page.getByRole("button", { name: "Close" })).toBeVisible();
+  await getPageInIframe(page).getByRole("button", { text: "Continue" }).click();
+  await expect(page.getByRole("button", { name: "Close" })).not.toBeVisible();
 
   /**
    * Go to "My Account" page – it's now available as the reader account has been created.
    */
   await page.getByRole("link", { name: "My Account" }).click();
-  await expect(page.getByLabel("Email address")).toHaveValue(emailAddress);
+  await expect(
+    page.getByRole("textbox", { name: "Email address" })
+  ).toHaveValue(emailAddress);
   await page.getByRole("link", { name: "My Subscription" }).click();
 
   await expect(page.getByText("Via visa card ending in 4242")).toBeVisible();
