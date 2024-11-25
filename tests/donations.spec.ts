@@ -26,9 +26,6 @@ test("Donations", async ({ page }) => {
   await getPageInIframe(page).getByLabel("First name *").fill("John");
   await getPageInIframe(page).getByLabel("Last name *").fill("Doe");
 
-  // HACK: till https://github.com/Automattic/newspack-blocks/pull/1921 is deployed.
-  await page.waitForTimeout(2000);
-
   await getPageInIframe(page).getByRole("button", { name: "Continue" }).click();
 
   await getStripeIframe(page)
