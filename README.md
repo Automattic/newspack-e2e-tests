@@ -5,8 +5,10 @@
 ## Setting up a test site (CI or local)
 
 1. On the test site, install and activate `newspack-plugin` and run `wp newspack setup`.
-1. Install and activate also `woocommerce-gateway-stripe` and `woocommerce-subscriptions` plugins.
-1. Configure the Stripe gateway to use the WC Connect Stripe gateway version (*not* the "Legacy checkout experience").
+2. Go to Newspack > Reader Revenue and publish the Donations page
+3. Install and activate also `woocommerce-gateway-stripe` and `woocommerce-subscriptions` plugins.
+4. Configure the Stripe gateway to use the WC Connect Stripe gateway version (*not* the "Legacy checkout experience").
+5. Make sure Stripe "Link by Stripe" option is disabled
 
 ## Local setup & testing
 
@@ -16,7 +18,7 @@ Then, follow the "Setting up a test site" instructions from this doc.
 
 1. One-time setup (unless the files mentioned below are updated)
    - Create an `.env` file (see `.env-sample`).
-   - run `e2e-reset.sh` in the docker container
+   - move `e2e-reset.sh` to the site's html folder and run it in the docker container
    - put `e2e-plugin.php` in the test site's plugins directory
 2. Testing
    - run `npm t` for a single test run
