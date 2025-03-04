@@ -21,6 +21,10 @@ echo "Enabling RAS"
 wp --allow-root --skip-plugins --skip-themes option set newspack_reader_activation_enabled 1
 
 echo ""
+echo "Enabling email address updates feature flag"
+wp --allow-root --skip-plugins --skip-themes config set NEWSPACK_EMAIL_CHANGE_ENABLED true
+
+echo ""
 echo "Activating the E2E plugin"
 wp --allow-root --skip-plugins --skip-themes plugin activate e2e-plugin
 

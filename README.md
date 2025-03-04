@@ -12,7 +12,7 @@ Then, follow the "Setting up a test site" instructions from this doc.
 
 1. One-time setup (unless the files mentioned below are updated)
    - create an `.env` file (see `.env-sample`).
-   - move `e2e-reset.sh` to the site's html folder and run it in the docker container
+   - copy `e2e-reset.sh` to the site's html folder and run it in the docker container
    - put `e2e-plugin.php` in the test site's plugins directory
    - set up payments - see "Payments" section below
 2. Testing
