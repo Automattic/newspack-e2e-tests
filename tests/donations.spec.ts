@@ -56,9 +56,9 @@ test("Donations", async ({ page }) => {
    * Go to "My Account" page – it's now available as the reader account has been created.
    */
   await page.getByRole("link", { name: "My Account" }).click();
-  await expect(
-    page.getByRole("textbox", { name: "Email address" })
-  ).toHaveValue(emailAddress);
+  await expect(page.locator("#newspack_account_email")).toHaveValue(
+    emailAddress
+  );
   await page.getByRole("link", { name: "My Subscription" }).click();
 
   await expect(page.getByText("Via visa card ending in 4242")).toBeVisible();
