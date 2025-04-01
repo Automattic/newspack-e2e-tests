@@ -1,8 +1,12 @@
 #!/bin/bash
 
 echo ""
-echo "Making sure all necessary plugins are active"
+echo "Making sure all Newspack plugins are active"
 wp --allow-root --skip-plugins --skip-themes plugin activate newspack-plugin newspack-blocks newspack-popups newspack-ads newspack-newsletters
+
+echo ""
+echo "Making sure all third-party plugins are active"
+wp --allow-root --skip-themes plugin activate woocommerce woocommerce-subscriptions woocommerce-memberships
 
 echo ""
 echo "Enabling RAS"
@@ -45,8 +49,11 @@ wp --allow-root --skip-plugins --skip-themes term list newspack_popups_taxonomy 
 # Site setup - could be a testing scenario of its own some day, via UI.
 echo ""
 echo "Setup the site - Reader Revenue"
+# Calling this method will create the page if it does not exist.
+wp --allow-root --skip-themes eval "\Newspack\Donations::get_donation_page_info();"
 wp --allow-root --skip-plugins --skip-themes post update $(wp --allow-root --skip-plugins --skip-themes option get newspack_donation_page_id) --post_status=publish
 # Create the donation products – this happens when the RR settings are saved in RR wizard.
 wp --allow-root --skip-themes eval "\Newspack\Donations::update_donation_product();"
 # Limit the fields required for checkout.
 wp --allow-root --skip-plugins --skip-themes option set newspack_donations_billing_fields '["billing_email","billing_first_name","billing_last_name"]' --format=json
+wp --allow-root --skip-plugins --skip-themes option set woocommerce_coming_soon 'no'
