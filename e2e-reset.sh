@@ -12,6 +12,8 @@ wp --allow-root --skip-themes plugin activate woocommerce-subscriptions woocomme
 echo ""
 echo "Setting up Newspack"
 wp --allow-root --skip-plugins --skip-themes config set NEWSPACK_IS_E2E true --raw
+# Note that this feature flag will be removed in the future.
+wp --allow-root --skip-plugins --skip-themes config set NEWSPACK_EMAIL_CHANGE_ENABLED true --raw
 wp --allow-root --skip-themes newspack setup
 
 echo ""
