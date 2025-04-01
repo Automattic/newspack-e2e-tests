@@ -1,12 +1,18 @@
 #!/bin/bash
 
 echo ""
-echo "Making sure all Newspack plugins are active"
+echo "Activating Newspack plugins"
 wp --allow-root --skip-plugins --skip-themes plugin activate newspack-plugin newspack-blocks newspack-popups newspack-ads newspack-newsletters
 
 echo ""
-echo "Making sure all third-party plugins are active"
-wp --allow-root --skip-themes plugin activate woocommerce woocommerce-subscriptions woocommerce-memberships
+echo "Activating third-party plugins"
+wp --allow-root --skip-themes plugin install --activate woocommerce woocommerce-gateway-stripe
+wp --allow-root --skip-themes plugin activate woocommerce-subscriptions woocommerce-memberships woocommerce-name-your-price
+
+echo ""
+echo "Setting up Newspack"
+wp --allow-root --skip-plugins --skip-themes config set NEWSPACK_IS_E2E true --raw
+wp --allow-root --skip-themes newspack setup
 
 echo ""
 echo "Enabling RAS"
@@ -14,7 +20,7 @@ wp --allow-root --skip-plugins --skip-themes option set newspack_reader_activati
 
 echo ""
 echo "Activating the E2E plugin"
-wp --allow-root  --skip-plugins --skip-themes plugin activate e2e-plugin
+wp --allow-root --skip-plugins --skip-themes plugin activate e2e-plugin
 
 echo ""
 echo "Removing saved emails…"
