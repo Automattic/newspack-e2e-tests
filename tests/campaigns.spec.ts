@@ -1,14 +1,14 @@
 import "./setup";
 
 import { test, expect } from "@playwright/test";
-import { logIn, goToWizard, isMobileAdmin } from "./utils-admin";
+import { logIn, goToAdminMenu, isMobileAdmin } from "./utils-admin";
 import { randomString } from "./utils";
 
 test("Create and view a prompt", async ({ page }) => {
   await logIn(page);
   const isMobile = await isMobileAdmin(page);
 
-  await goToWizard("Campaigns", page);
+  await goToAdminMenu("Audience", "Campaigns", page);
 
   await expect(page.getByRole("heading", { name: "Everyone" })).toBeVisible();
   await page.getByRole("button", { name: "Add New Campaign" }).click();
@@ -74,7 +74,7 @@ test("Create and view a prompt", async ({ page }) => {
   await expect(page.getByText(campaignBody)).not.toBeVisible();
 
   // Delete the prompt.
-  await page.goto("/wp-admin/admin.php?page=newspack-popups-wizard#/campaigns");
+  await goToAdminMenu("Audience", "Campaigns", page);
   await page.getByLabel("More options").click();
   await page.getByRole("menuitem", { name: "Delete" }).click();
   await expect(

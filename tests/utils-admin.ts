@@ -24,14 +24,15 @@ export const isMobileAdmin = async (page) => {
   return await page.getByRole("menuitem", { name: "Menu" }).isVisible();
 };
 
-export const goToWizard = async (wizardName, page) => {
+export const goToAdminMenu = async (menuItem, submenuItem, page) => {
+  await page.goto("/wp-admin");
   const isMobile = await isMobileAdmin(page);
   if (isMobile) {
     await page.getByRole("menuitem", { name: "Menu" }).click();
   }
   await page
     .getByLabel("Main menu", { exact: true })
-    .getByRole("link", { name: "Newspack" })
+    .getByRole("link", { name: menuItem })
     .click();
-  await page.getByRole("link", { name: wizardName, exact: true }).click();
+  await page.getByRole("link", { name: submenuItem, exact: true }).click();
 };
