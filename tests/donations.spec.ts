@@ -6,8 +6,8 @@ import { randomEmailAddress } from "./utils";
 const getPageInIframe = (page) =>
   page.frameLocator('iframe[name="newspack_modal_checkout_iframe"]');
 
-const getStripeIframe = (page) =>
-  getPageInIframe(page).frameLocator(`[title="Secure payment input frame"]`);
+const getStripeIframeCard = (page) =>
+  getPageInIframe(page).frameLocator(`[data-payment-method-type="card"] [title="Secure payment input frame"]`);
 
 const emailAddress = randomEmailAddress();
 
@@ -28,16 +28,16 @@ test("Donations", async ({ page }) => {
 
   await getPageInIframe(page).getByRole("button", { name: "Continue" }).click();
 
-  await getStripeIframe(page)
+  await getStripeIframeCard(page)
     .getByPlaceholder("1234 1234 1234 1234")
     .fill("4242 4242 4242 42424");
-  await getStripeIframe(page).getByPlaceholder("MM / YY").fill("04 / 44");
-  await getStripeIframe(page).getByLabel("Security code").fill("333");
+  await getStripeIframeCard(page).getByPlaceholder("MM / YY").fill("04 / 44");
+  await getStripeIframeCard(page).getByLabel("Security code").fill("333");
 
   // Depending on geo, Stripe may want a ZIP code, too.
-  const zipLocator = await getStripeIframe(page).getByPlaceholder("12345");
+  const zipLocator = await getStripeIframeCard(page).getByPlaceholder("12345");
   if (await zipLocator.isVisible()) {
-    await getStripeIframe(page).getByPlaceholder("12345").fill("12345");
+    await getStripeIframeCard(page).getByPlaceholder("12345").fill("12345");
   }
 
   await getPageInIframe(page)
