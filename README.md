@@ -5,14 +5,16 @@
 ## Setting up a test site (CI or local)
 
 1. On the test site, install and activate `newspack-plugin` and run `wp newspack setup`.
-2. Go to Newspack > Reader Revenue and publish the Donations page
+2. Go to Newspack > Audience Management -> Donations and click "Edit Page" under Donations Landing Page. Then publish the Donations page you are taken to.
 3. Install and activate also `woocommerce-gateway-stripe` and `woocommerce-subscriptions` plugins.
 4. Configure the Stripe gateway to use the WC Connect Stripe gateway version (*not* the "Legacy checkout experience").
-5. Make sure Stripe "Link by Stripe" option is disabled
+5. Make sure Stripe "Link by Stripe" option is disabled.
 
 ## Local setup & testing
 
 Will need a local test site – set it up with [`newspack-docker`](https://github.com/Automattic/newspack-docker) by running `n sites-add e2e`. This will create a local `https://e2e.local` site.
+
+Run `npm install`. You might have to run `npx playwright install` too.
 
 Then, follow the "Setting up a test site" instructions from this doc.
 
