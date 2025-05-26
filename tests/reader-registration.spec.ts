@@ -115,10 +115,10 @@ test("Register on the site", async ({ page }) => {
   const newEmailAddress = randomEmailAddress();
   await page.locator("#newspack_account_email").fill(newEmailAddress);
   await page.getByRole("button", { name: "Save changes" }).click();
-  const expectedNotification = `A verification email has been sent to ${emailAddress} and ${newEmailAddress}. Please verify to complete the change.`;
+  const expectedNotification = `A verification email has been sent to ${newEmailAddress}. Please verify to complete the change.`;
   await expect(page.getByText(expectedNotification)).toBeVisible();
   await goToEmailClient(page, newEmailAddress);
-  await page.getByText(`Confirm email change (${emailAddress}`).click();
+  await page.getByText(`Confirm email change (${newEmailAddress})`).click();
   await clickLinkURL(page, "Confirm email change");
   await expect(
     page.getByText("Your email address has been successfully updated.")
