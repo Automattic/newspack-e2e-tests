@@ -11,7 +11,11 @@ const getStripeIframeCard = (page) =>
 
 const emailAddress = randomEmailAddress();
 
-test("Donations", async ({ page }) => {
+test("Donations",  {
+      tag: '@with-woo',
+    },
+    async ({page}) => {
+
   /**
    * Make a donation.
    */

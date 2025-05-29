@@ -41,12 +41,40 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: "chromium",
+      name: 'setup-vanilla',
+      testMatch: 'vanilla.ts',
+      testDir: './setup',
+      use: {
+        ...devices["Desktop Chrome"],
+      },
+    },
+    {
+      name: 'vanilla',
+        use: {
+          ...devices["Desktop Chrome"],
+          launchOptions,
+        },
+        grep: /@vanilla/,
+      dependencies: ['setup-vanilla']
+    },
+    {
+      name: 'setup-with-woo',
+      testMatch: 'with-woo.ts',
+      testDir: './setup',
+      use: {
+        ...devices["Desktop Chrome"],
+      },
+      dependencies: ['vanilla']
+    },
+    {
+      name: 'with-woo',
       use: {
         ...devices["Desktop Chrome"],
         launchOptions,
       },
-    },
+      grep: /@with-woo/,
+      dependencies: ['setup-with-woo']
+    }
 
     // {
     //   name: "firefox",
@@ -59,10 +87,10 @@ export default defineConfig({
     // },
 
     /* Test against mobile viewports. */
-    {
-      name: "Mobile Chrome",
-      use: { ...devices["Pixel 5"], launchOptions },
-    },
+    // {
+    //   name: "Mobile Chrome",
+    //   use: { ...devices["Pixel 5"], launchOptions },
+    // },
     // {
     //   name: "Mobile Safari",
     //   use: { ...devices["iPhone 12"], launchOptions },

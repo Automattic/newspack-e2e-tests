@@ -1,9 +1,11 @@
-import "./setup";
-
 import { test, expect } from "@playwright/test";
+
 import {logIn} from "./utils-admin";
 
-test("Top featured post and edit homepage", async ({ page }) => {
+test("Top featured post and edit homepage", {
+        tag: '@vanilla',
+    },
+    async ({page}) => {
     await logIn(page);
     // Go to the homepage and click the featured post.
     await page.goto('/');
