@@ -1,5 +1,3 @@
-import "./setup";
-
 import { test, expect } from "@playwright/test";
 import { randomEmailAddress } from "./utils";
 

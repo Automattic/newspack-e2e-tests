@@ -38,11 +38,6 @@ export const goToAdminMenu = async (menuItem, submenuItem, page) => {
 
 // Load a snapshot by its slug using the admin interface.
 export const loadSnapshot = async (page, snapshotName: string) => {
-  if (!process.env.USE_SNAPSHOTS) {
-    console.log(`Snapshots are not enabled. Not loading snapshot for ${snapshotName}.`);
-    return false;
-  }
-
   console.log(`Setting up snapshot: ${snapshotName}`);
 
   await logIn(page);
