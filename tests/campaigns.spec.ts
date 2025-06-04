@@ -3,7 +3,7 @@ import { logIn, goToAdminMenu, isMobileAdmin } from "./utils-admin";
 import { randomString } from "./utils";
 
 test("Create and view a prompt",  {
-      tag: '@with-woo',
+      tag: ['@vanilla', '@with-woo'],
     },
     async ({page}) => {
   await logIn(page);

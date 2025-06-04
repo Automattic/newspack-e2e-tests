@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 import {logIn} from "./utils-admin";
 
 test("Top featured post and edit homepage", {
-        tag: '@vanilla',
+        tag: ['@vanilla', '@with-woo'],
     },
     async ({page}) => {
     await logIn(page);

@@ -12,7 +12,7 @@ const emailAddress = randomEmailAddress();
 test.beforeEach(addClickIndicator);
 
 test("Register on the site", {
-      tag: '@with-woo',
+      tag: ['@vanilla', '@with-woo'],
     },
     async ({page}) => {
   /**
