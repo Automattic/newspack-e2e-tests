@@ -69,6 +69,7 @@ wp --allow-root --skip-plugins --skip-themes option delete newspack_popups_segme
 wp --allow-root --skip-plugins --skip-themes term list newspack_popups_taxonomy --field=term_id | xargs wp --allow-root --skip-plugins --skip-themes term delete newspack_popups_taxonomy || true
 
 wp --allow-root --skip-plugins config set NP_MANAGER_SNAPSHOTS_ENABLED true --type=constant --raw
+wp --allow-root --skip-plugins config set NP_MANAGER_SNAPSHOTS_EXCLUDE_MEDIA true --type=constant --raw
 
 wp --allow-root cache flush
 wp --allow-root newspack-manager site-testing-snapshots delete vanilla
