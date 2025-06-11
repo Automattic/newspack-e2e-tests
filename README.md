@@ -87,6 +87,8 @@ USE_SNAPSHOTS is TRUE (with workers: 1):
 └─────────────────┘
 ```
 
+If you want to exclude media from snapshots (and that is proabably a good idea for e2e testing), set the `NP_MANAGER_SNAPSHOTS_EXCLUDE_MEDIA` constant to true.
+
 ## Writing tests
 
 Tests can be written by hand in the `tests` directory, or with the help of Playwright codegen. To use the latter option, run `npm run codegen -- <site-url>`. When you're done, copy and paste the code to `tests/<test-name>.spec.js`, adjust, and submit the changes in a PR.
