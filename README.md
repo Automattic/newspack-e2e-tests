@@ -96,4 +96,8 @@ Tests can be written by hand in the `tests` directory, or with the help of Playw
 If the tests manipulate any persistent items (anything in the DB), reset commands should be added to the `/bin/e2e-reset.sh` script. In the future, if that's too brittle, we might opt for a full reset, though.
 
 ## Resetting the test site
-The test site can be reset by running the `e2e-reset.sh` script. Please note that on initial setup of the site, you will need to set up the Stripe test connection manually or put this in
+The test site can be reset by running the `e2e-reset.sh` script. Please note that on initial setup of the site, you will need to set up the Stripe test connection manually or put this in an `.env` file in the same dir as the `e2e-reset.sh`:
+```
+STRIPE_PUB_KEY=<the-pub-key>
+STRIPE_SECRECT_KEY=<tha-secret-key>
+```
