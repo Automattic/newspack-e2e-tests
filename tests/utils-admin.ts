@@ -1,4 +1,3 @@
-import { expect } from "@playwright/test";
 
 // Log in to the admin dashboard.
 export const logIn = async (page) => {
@@ -35,4 +34,40 @@ export const goToAdminMenu = async (menuItem, submenuItem, page) => {
     .getByRole("link", { name: menuItem })
     .click();
   await page.getByRole("link", { name: submenuItem, exact: true }).click();
+};
+
+// Load a snapshot by its slug using the admin interface.
+export const loadSnapshot = async (page, snapshotName: string) => {
+  console.log(`Setting up snapshot: ${snapshotName}`);
+
+  await logIn(page);
+  await page.goto('/wp-admin/tools.php?page=newspack-snapshots');
+
+  const row = page.getByRole('row').filter({
+    has: page.getByRole('cell', {name: snapshotName, exact: true})
+  });
+
+  // Make sure a snapshot with that name is even found and error hard if not.
+  const count = await row.count();
+  if (count === 0) {
+    throw new Error(`FATAL: Snapshot "${snapshotName}" not found in the table of available snapshots. Cannot continue tests.`);
+  }
+
+  console.log(`Found the snapshot: ${snapshotName}. Now loading it...`);
+
+  page.on('dialog', dialog => {
+    dialog.accept();
+  });
+
+  const loadLink = row.locator('a[href*="np_snapshot_load_link"]');
+  await loadLink.waitFor({state: 'visible'});
+  await loadLink.click();
+
+  // Add a small wait to ensure dialog handling completes.
+  await page.waitForTimeout(1000);
+  // And wait for the page to load after the snapshot is loaded. We should be logged out and on the login page.
+  await page.waitForSelector('label:text("Username or Email Address")');
+
+  console.log(`Done loading snapshot: ${snapshotName}`);
+  return true;
 };

@@ -1,5 +1,3 @@
-import "./setup";
-
 export const randomString = (length = 8) =>
   Math.random()
     .toString(36)

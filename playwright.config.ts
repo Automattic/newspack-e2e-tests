@@ -38,44 +38,59 @@ export default defineConfig({
   },
   timeout: 120000,
   expect: { timeout: 120000 },
-  /* Configure projects for major browsers */
+  /* Note that projects depend on each other if we are using snapshots. Vanilla needs to run first and then with Woo.  */
   projects: [
+    // These two projects are used to set up the environment for the tests.
     {
-      name: "chromium",
+      name: 'setup-vanilla',
+      testMatch: 'vanilla.ts',
+      testDir: './setup',
+    },
+    {
+      name: 'setup-with-woo',
+      testMatch: 'with-woo.ts',
+      testDir: './setup',
+      dependencies: process.env.USE_SNAPSHOTS ? ['Vanilla in Mobile Chrome'] : []
+    },
+
+    // Vanilla tests.
+    {
+      name: 'Vanilla in Desktop Chrome',
+        use: {
+          ...devices["Desktop Chrome"],
+          launchOptions,
+        },
+        grep: /@vanilla/,
+      dependencies: process.env.USE_SNAPSHOTS ? ['setup-vanilla'] : []
+    },
+    {
+      name: "Vanilla in Mobile Chrome",
+      use: {
+        ...devices["Pixel 5"],
+        launchOptions
+      },
+      grep: /@vanilla/,
+      dependencies: process.env.USE_SNAPSHOTS ? ['Vanilla in Desktop Chrome'] : []
+    },
+
+    // All tests (will also include Vanilla tests).
+    {
+      name: 'With Woo in Desktop Chrome',
       use: {
         ...devices["Desktop Chrome"],
         launchOptions,
       },
+      grep: /@with-woo/,
+      dependencies: process.env.USE_SNAPSHOTS ? ['setup-with-woo'] : []
     },
-
-    // {
-    //   name: "firefox",
-    //   use: { ...devices["Desktop Firefox"] },
-    // },
-
-    // {
-    //   name: "webkit",
-    //   use: { ...devices["Desktop Safari"] },
-    // },
-
-    /* Test against mobile viewports. */
     {
-      name: "Mobile Chrome",
-      use: { ...devices["Pixel 5"], launchOptions },
+      name: "With Woo in Mobile Chrome",
+      use: {
+        ...devices["Pixel 5"],
+        launchOptions
+      },
+      grep: /@with-woo/,
+      dependencies: process.env.USE_SNAPSHOTS ? ['With Woo in Desktop Chrome'] : []
     },
-    // {
-    //   name: "Mobile Safari",
-    //   use: { ...devices["iPhone 12"], launchOptions },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
   ],
 });

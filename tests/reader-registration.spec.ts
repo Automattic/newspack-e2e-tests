@@ -1,5 +1,3 @@
-import "./setup";
-
 import { test, expect } from "@playwright/test";
 import {
   addClickIndicator,
@@ -13,7 +11,10 @@ const emailAddress = randomEmailAddress();
 
 test.beforeEach(addClickIndicator);
 
-test("Register on the site", async ({ page }) => {
+test("Register on the site", {
+      tag: '@with-woo',
+    },
+    async ({page}) => {
   /**
    * Create a new reader account using the "Sign In" header link.
    */

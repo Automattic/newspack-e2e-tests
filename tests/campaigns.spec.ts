@@ -1,10 +1,11 @@
-import "./setup";
-
 import { test, expect } from "@playwright/test";
 import { logIn, goToAdminMenu, isMobileAdmin } from "./utils-admin";
 import { randomString } from "./utils";
 
-test("Create and view a prompt", async ({ page }) => {
+test("Create and view a prompt",  {
+      tag: ['@vanilla', '@with-woo'],
+    },
+    async ({page}) => {
   await logIn(page);
   const isMobile = await isMobileAdmin(page);
 
