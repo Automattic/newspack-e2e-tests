@@ -10,7 +10,7 @@ commands:
           name: Create .env file from env vars
           command: printenv >> ./.env
       - run:
-          name: Reset the test site
+          name: Update the e2e-plugin.php file on the site
           command: |
             echo "Resetting the test site"
             apt-get update
