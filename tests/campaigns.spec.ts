@@ -66,10 +66,7 @@ test("Create and view a prompt",  {
   // Go to the front-end and verify the prompt is visible.
   await page.goto("/");
   await expect(page.getByText(campaignBody)).toBeVisible();
-  await page
-    .getByRole("button", {
-      name: `${campaignBody} Close Pop-up`,
-    })
+  await page.getByRole("button", { name: campaignBody })
     .getByLabel("Close Pop-up")
     .click();
   await expect(page.getByText(campaignBody)).not.toBeVisible();
