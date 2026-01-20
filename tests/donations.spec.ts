@@ -20,9 +20,7 @@ test("Donations",  {
   await page.goto("/support-our-publication/");
   await page.getByRole("button", { name: "Donate Now" }).click();
   await expect(
-    getPageInIframe(page).locator(
-      'strong:has-text("Donate: $15.00 every month")'
-    )
+    getPageInIframe(page).getByText('Donate: $15.00 / month')
   ).toBeVisible();
   await getPageInIframe(page).getByLabel("Email address *").fill(emailAddress);
   await getPageInIframe(page).getByLabel("First name *").fill("John");
@@ -65,6 +63,6 @@ test("Donations",  {
 
   await expect(page.getByText("Via visa card ending in 4242")).toBeVisible();
   await expect(
-    page.getByRole("cell", { name: "$15.00 every month" }).first()
+    page.getByRole("cell", { name: "$15.00 / month" }).first()
   ).toBeVisible();
 });
