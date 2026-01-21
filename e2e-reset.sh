@@ -43,11 +43,11 @@ echo "Selective resetting for E2E tests…"
 
 echo ""
 echo "Removing saved emails…"
-wp --allow-root --skip-plugins --skip-themes post delete $(wp --allow-root --skip-plugins --skip-themes post list --post_type=email_log --format=ids) --force || true
+wp --allow-root --skip-plugins --skip-themes post delete "$(wp --allow-root --skip-plugins --skip-themes post list --post_type=email_log --format=ids)" --force || true
 
 echo ""
 echo "Removing test users…"
-wp --allow-root --skip-plugins --skip-themes user delete $(wp --allow-root --skip-plugins --skip-themes user list --field=ID | grep -v 1) --yes || true
+wp --allow-root --skip-plugins --skip-themes user delete "$(wp --allow-root --skip-plugins --skip-themes user list --field=ID | grep -v 1)" --yes || true
 
 echo ""
 echo "Setting the site title…"
@@ -62,7 +62,7 @@ wp --allow-root --skip-plugins --skip-themes user meta add 1 wp_persisted_prefer
 echo ""
 echo "Deleting all Campaigns entities…"
 # Remove all posts of type newspack_popups_cpt
-wp --allow-root --skip-plugins --skip-themes post delete $(wp --allow-root --skip-plugins --skip-themes post list --post_type=newspack_popups_cpt --format=ids) --force || true
+wp --allow-root --skip-plugins --skip-themes post delete "$(wp --allow-root --skip-plugins --skip-themes post list --post_type=newspack_popups_cpt --format=ids)" --force || true
 # Remove all segments
 wp --allow-root --skip-plugins --skip-themes option delete newspack_popups_segments || true
 # Remove the "Campaigns"
@@ -116,7 +116,7 @@ echo ""
 echo "Setup the site - Reader Revenue"
 # Calling this method will create the page if it does not exist.
 wp --allow-root --skip-themes eval "\Newspack\Donations::get_donation_page_info();"
-wp --allow-root --skip-plugins --skip-themes post update $(wp --allow-root --skip-plugins --skip-themes option get newspack_donation_page_id) --post_status=publish
+wp --allow-root --skip-plugins --skip-themes post update "$(wp --allow-root --skip-plugins --skip-themes option get newspack_donation_page_id)" --post_status=publish
 # Create the donation products – this happens when the RR settings are saved in RR wizard.
 wp --allow-root --skip-themes eval "\Newspack\Donations::update_donation_product();"
 # Limit the fields required for checkout.
