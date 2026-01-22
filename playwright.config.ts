@@ -68,8 +68,8 @@ export default defineConfig({
     {
       name: "Vanilla in Mobile Chrome",
       use: {
-        ...devices["Pixel 5"],
-        launchOptions,
+        ...devices["Pixel 4"],
+        launchOptions
       },
       grep: /@vanilla/,
       dependencies: process.env.USE_SNAPSHOTS
@@ -90,8 +90,8 @@ export default defineConfig({
     {
       name: "With Woo in Mobile Chrome",
       use: {
-        ...devices["Pixel 5"],
-        launchOptions,
+        ...devices["Pixel 4"],
+        launchOptions
       },
       grep: /@with-woo/,
       dependencies: process.env.USE_SNAPSHOTS
