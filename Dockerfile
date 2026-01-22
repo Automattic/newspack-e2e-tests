@@ -1,6 +1,7 @@
 FROM node:22-bullseye
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+ARG node_memory=16384
 
 COPY package.json package-lock.json /tmp/
 
