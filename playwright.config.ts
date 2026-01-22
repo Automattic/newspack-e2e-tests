@@ -26,7 +26,7 @@ export default defineConfig({
   workers: 1,
   fullyParallel: false,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: "html",
+  reporter: [[ "html", { open: process.env.CI ? "never" : "on-failure" } ]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -42,55 +42,61 @@ export default defineConfig({
   projects: [
     // These two projects are used to set up the environment for the tests.
     {
-      name: 'setup-vanilla',
-      testMatch: 'vanilla.ts',
-      testDir: './setup',
+      name: "setup-vanilla",
+      testMatch: "vanilla.ts",
+      testDir: "./setup",
     },
     {
-      name: 'setup-with-woo',
-      testMatch: 'with-woo.ts',
-      testDir: './setup',
-      dependencies: process.env.USE_SNAPSHOTS ? ['Vanilla in Mobile Chrome'] : []
+      name: "setup-with-woo",
+      testMatch: "with-woo.ts",
+      testDir: "./setup",
+      dependencies: process.env.USE_SNAPSHOTS
+        ? ["Vanilla in Mobile Chrome"]
+        : [],
     },
 
     // Vanilla tests.
     {
-      name: 'Vanilla in Desktop Chrome',
-        use: {
-          ...devices["Desktop Chrome"],
-          launchOptions,
-        },
-        grep: /@vanilla/,
-      dependencies: process.env.USE_SNAPSHOTS ? ['setup-vanilla'] : []
+      name: "Vanilla in Desktop Chrome",
+      use: {
+        ...devices["Desktop Chrome"],
+        launchOptions,
+      },
+      grep: /@vanilla/,
+      dependencies: process.env.USE_SNAPSHOTS ? ["setup-vanilla"] : [],
     },
     {
       name: "Vanilla in Mobile Chrome",
       use: {
         ...devices["Pixel 5"],
-        launchOptions
+        launchOptions,
       },
       grep: /@vanilla/,
-      dependencies: process.env.USE_SNAPSHOTS ? ['Vanilla in Desktop Chrome'] : []
+      dependencies: process.env.USE_SNAPSHOTS
+        ? ["Vanilla in Desktop Chrome"]
+        : [],
     },
 
     // All tests (will also include Vanilla tests).
     {
-      name: 'With Woo in Desktop Chrome',
+      name: "With Woo in Desktop Chrome",
       use: {
         ...devices["Desktop Chrome"],
         launchOptions,
       },
       grep: /@with-woo/,
-      dependencies: process.env.USE_SNAPSHOTS ? ['setup-with-woo'] : []
+      dependencies: process.env.USE_SNAPSHOTS ? ["setup-with-woo"] : [],
     },
     {
       name: "With Woo in Mobile Chrome",
       use: {
         ...devices["Pixel 5"],
-        launchOptions
+        launchOptions,
       },
       grep: /@with-woo/,
-      dependencies: process.env.USE_SNAPSHOTS ? ['With Woo in Desktop Chrome'] : []
+      dependencies: process.env.USE_SNAPSHOTS
+        ? ["With Woo in Desktop Chrome"]
+        : [],
     },
   ],
 });
