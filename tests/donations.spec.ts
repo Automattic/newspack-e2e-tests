@@ -21,7 +21,7 @@ test("Donations",  {
   await page.getByRole("button", { name: "Donate Now" }).click();
   await expect(
     getPageInIframe(page).locator(
-      'strong:has-text("Donate: $15.00 every month")'
+      'strong:has-text("Donate: $15.00 / month")'
     )
   ).toBeVisible();
   await getPageInIframe(page).getByLabel("Email address *").fill(emailAddress);
