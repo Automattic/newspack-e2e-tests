@@ -40,7 +40,7 @@ export default defineConfig({
     video: "on",
   },
   timeout: 120000,
-  expect: { timeout: 120000 },
+  expect: { timeout: 20000 },
   /* Note that projects depend on each other if we are using snapshots. Vanilla needs to run first and then with Woo.  */
   projects: [
     // These two projects are used to set up the environment for the tests.
