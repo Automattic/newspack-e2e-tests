@@ -21,7 +21,7 @@ export default defineConfig({
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI ? 1 : 0,
   /* Opt out of parallel tests. */
   workers: 1,
   fullyParallel: false,
@@ -29,6 +29,7 @@ export default defineConfig({
   reporter: [
     ["list"],
     ["html", { open: process.env.CI ? "never" : "on-failure" }],
+    ["junit", { outputFile: "test-results/results.xml" }],
   ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
@@ -36,8 +37,9 @@ export default defineConfig({
     baseURL: process.env.SITE_URL,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: "on-first-retry",
-    video: "on",
+    trace: process.env.CI ? "on-first-retry" : "retain-on-failure",
+    video: "retain-on-failure",
+    screenshot: { mode: "only-on-failure", fullPage: true },
   },
   timeout: 120000,
   expect: { timeout: 20000 },
