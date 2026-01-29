@@ -65,6 +65,6 @@ test("Donations",  {
 
   await expect(page.getByText("Via visa card ending in 4242")).toBeVisible();
   await expect(
-    page.getByRole("cell", { name: "$15.00 every month" }).first()
+    page.getByRole("cell", { name: "$15.00 / month" }).first()
   ).toBeVisible();
 });
