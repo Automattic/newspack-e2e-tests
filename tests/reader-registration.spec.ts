@@ -32,7 +32,7 @@ test("Register on the site", {
   await page.getByRole("link", { name: "Continue" }).click();
   await page.getByRole("link", { name: "My Account" }).click();
   await page.waitForURL(/my-account/);
-  await page.getByText("Log out").click();
+  await page.getByText("Sign out").click();
 
   /**
    * Log in as the previously created reader.
@@ -85,7 +85,7 @@ test("Register on the site", {
     .fill(password);
   await page.getByLabel("Re-enter new password *").fill(password);
   await page.getByRole("button", { name: "Save" }).click();
-  await page.getByText("Log out").click();
+  await page.getByText("Sign out").click();
 
   /**
    * Reader logs in using the password.
