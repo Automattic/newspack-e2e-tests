@@ -44,7 +44,7 @@ test("Register on the site", {
     .fill(emailAddress);
   await page.getByRole("button", { name: "Continue" }).click();
   await expect(page.getByLabel("Sign in").locator("form")).toContainText(
-    "Enter the code sent to your email."
+    "Enter the code sent to your email"
   );
 
   /**
@@ -58,17 +58,21 @@ test("Register on the site", {
    * Now the user is authenticated via the magic link, they can update their name.
    */
   await page.getByRole("link", { name: "My Account" }).click();
-  await page.getByPlaceholder("Your Name").click();
-  await page.getByPlaceholder("Your Name").fill("John Doe");
-  await page.getByRole("button", { name: "Save changes" }).click();
-  await expect(page.getByText("Account details changed")).toBeVisible();
-  await expect(page.getByPlaceholder("Your Name")).toHaveValue("John Doe");
+  await page.getByRole("link", { name: "Account settings" }).click();
+  await page.getByPlaceholder("Your First Name").click();
+  await page.getByPlaceholder("Your First Name").fill("John");
+  await page.getByPlaceholder("Your Last Name").click();
+  await page.getByPlaceholder("Your Last Name").fill("Doe");
+  await page.getByRole("button", { name: "Update profile" }).click();
+  await expect(page.getByText("Account details changed successfully.")).toBeVisible();
+  await expect(page.getByPlaceholder("Your First Name")).toHaveValue("John");
+  await expect(page.getByPlaceholder("Your Last Name")).toHaveValue("Doe");
 
   /**
    * Reader sets up a password.
    */
   await page
-    .getByRole("link", { name: "Create a Password Email me a" })
+    .getByRole("link", { name: "Create a password" })
     .click();
   await expect(
     page.getByText(
@@ -81,10 +85,10 @@ test("Register on the site", {
 
   const password = randomString(14);
   await page
-    .getByLabel("New password *Required", { exact: true })
+    .getByLabel(/New password/)
     .fill(password);
-  await page.getByLabel("Re-enter new password *").fill(password);
-  await page.getByRole("button", { name: "Save" }).click();
+  await page.getByLabel(/Re-enter new password/).fill(password);
+  await page.getByRole("button", { name: "Save password" }).click();
   await page.getByText("Sign out").click();
 
   /**
@@ -114,8 +118,9 @@ test("Register on the site", {
    * Reader updates their email address.
    */
   const newEmailAddress = randomEmailAddress();
+  await page.getByRole("link", { name: "Account settings" }).click();
   await page.locator("#newspack_account_email").fill(newEmailAddress);
-  await page.getByRole("button", { name: "Save changes" }).click();
+  await page.getByRole("button", { name: "Update profile" }).click();
   const expectedNotification = `A verification email has been sent to ${newEmailAddress}. Please verify to complete the change.`;
   await expect(page.getByText(expectedNotification)).toBeVisible();
   await goToEmailClient(page, newEmailAddress);
