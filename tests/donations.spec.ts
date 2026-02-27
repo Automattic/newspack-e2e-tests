@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { randomEmailAddress } from "./utils";
+import { clickMyAccountMenuItem, randomEmailAddress } from "./utils";
 
 const getPageInIframe = (page) =>
   page.frameLocator('iframe[name="newspack_modal_checkout_iframe"]');
@@ -61,8 +61,7 @@ test("Donations",  {
   await expect(page.locator("#newspack_account_email")).toHaveValue(
     emailAddress
   );
-  await page.getByRole("link", { name: "My Subscription" }).click();
-
+  await clickMyAccountMenuItem(page, "Subscription");
   await expect(page.getByText("Visa card ending in 4242")).toBeVisible();
   await expect(
     page.getByRole("cell", { name: "$15.00 / month" }).first()
