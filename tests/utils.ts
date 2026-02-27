@@ -50,8 +50,8 @@ export const isMobile = async (page) =>
   await page.getByRole("button", { name: "Open navigation" }).isVisible();
 
 export const clickMyAccountMenuItem = async (page, label) => {
-	if ( await isMobile(page) ) {
-		await page.getByRole("button", { name: "Open navigation" }).click();
-	}
-	await page.getByRole("link", { name: label }).click();
-}
+  if (await isMobile(page)) {
+    await page.getByRole("button", { name: "Open navigation" }).click();
+  }
+  await page.getByRole("link", { name: label }).click();
+};
