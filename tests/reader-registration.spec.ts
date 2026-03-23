@@ -59,7 +59,7 @@ test("Register on the site", {
    * Now the user is authenticated via the magic link, they can update their name.
    */
   await page.getByRole("link", { name: "My Account" }).click();
-  await clickMyAccountMenuItem(page, "Account settings");
+  await page.waitForURL(/my-account/);
   await page.getByPlaceholder("Your First Name").click();
   await page.getByPlaceholder("Your First Name").fill("John");
   await page.getByPlaceholder("Your Last Name").click();
@@ -119,7 +119,6 @@ test("Register on the site", {
    * Reader updates their email address.
    */
   const newEmailAddress = randomEmailAddress();
-  await clickMyAccountMenuItem(page, "Account settings");
   await page.locator("#newspack_account_email").fill(newEmailAddress);
   await page.getByRole("button", { name: "Update profile" }).click();
   const expectedNotification = `A verification email has been sent to ${newEmailAddress}. Please verify to complete the change.`;
