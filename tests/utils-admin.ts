@@ -16,21 +16,25 @@ export const logIn = async (page) => {
 };
 
 /**
- * Returns a locator-like object for the block editor canvas.
- * WordPress 7.0+ renders the editor content inside iframe[name="editor-canvas"].
- * Older versions render it directly on the page, so this returns the page itself
- * when the iframe is not present.
+ * Returns a locator-like object scoped to the block editor canvas.
+ * WordPress 7.0+ renders the editor content inside iframe[name="editor-canvas"];
+ * older versions render it directly on the page under #editor.
  *
- * Waits briefly for the iframe to appear, since the editor loads asynchronously.
+ * Polls briefly for the iframe to handle the asynchronous editor load on WP 7+,
+ * but returns immediately on older versions instead of waiting a full timeout.
  */
 export const getEditorCanvas = async (page) => {
-  const canvasIframe = page.locator('iframe[name="editor-canvas"]');
-  try {
-    await canvasIframe.waitFor({ state: "attached", timeout: 5000 });
-    return page.frameLocator('iframe[name="editor-canvas"]');
-  } catch {
-    return page;
+  const canvasSelector = 'iframe[name="editor-canvas"]';
+  const canvasIframe = page.locator(canvasSelector);
+  // Poll for the iframe in short increments (up to ~1s total) so WP 6.x doesn't pay the wait penalty.
+  for (let i = 0; i < 5; i++) {
+    if (await canvasIframe.count()) {
+      return page.frameLocator(canvasSelector);
+    }
+    await page.waitForTimeout(200);
   }
+  // Fall back to the editor root on older WP versions.
+  return page.locator("#editor");
 };
 
 /**

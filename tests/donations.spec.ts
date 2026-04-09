@@ -57,7 +57,7 @@ test("Donations",  {
   /**
    * Go to "My Account" page – it's now available as the reader account has been created.
    */
-  await page.getByRole("link", { name: "My Account" }).last().click();
+  await page.locator(".newspack-reader__account-link:visible").first().click();
   await page.waitForURL(/my-account/);
   await expect(page.locator("#newspack_account_email")).toHaveValue(
     emailAddress

@@ -32,7 +32,9 @@ test("Create and view a prompt",  {
 
   await openEditorSettings(page);
   await page.getByRole("tab", { name: "Prompt" }).click();
-  const settingsPanel = page.getByRole("button", { name: "Settings", exact: true }).last();
+  // Expand the "Settings" panel within the Prompt tabpanel to reveal the delay input.
+  const promptPanel = page.getByRole("tabpanel", { name: "Prompt" });
+  const settingsPanel = promptPanel.getByRole("button", { name: "Settings", exact: true });
   if ((await settingsPanel.getAttribute("aria-expanded")) === "false") {
     await settingsPanel.click();
   }
