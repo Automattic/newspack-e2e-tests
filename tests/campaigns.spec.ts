@@ -25,9 +25,10 @@ test("Create and view a prompt",  {
   const randomId = randomString(4);
   const campaignBody = `This is prompt content (#${randomId})`;
   const campaignTitle = `Prompt #${randomId}`;
-  await getEditorCanvas(page).getByLabel("Add title").fill(campaignTitle);
-  await getEditorCanvas(page).getByLabel("Add default block").click();
-  await getEditorCanvas(page).getByLabel("Empty block; start writing or").fill(campaignBody);
+  const editor = await getEditorCanvas(page);
+  await editor.getByLabel("Add title").fill(campaignTitle);
+  await editor.getByLabel("Add default block").click();
+  await editor.getByLabel("Empty block; start writing or").fill(campaignBody);
 
   await openEditorSettings(page);
   await page.getByRole("tab", { name: "Prompt" }).click();

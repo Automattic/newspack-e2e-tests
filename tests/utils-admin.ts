@@ -16,11 +16,22 @@ export const logIn = async (page) => {
 };
 
 /**
- * Returns a FrameLocator for the block editor canvas.
- * WordPress 6.4+ renders the editor content inside iframe[name="editor-canvas"].
+ * Returns a locator-like object for the block editor canvas.
+ * WordPress 7.0+ renders the editor content inside iframe[name="editor-canvas"].
+ * Older versions render it directly on the page, so this returns the page itself
+ * when the iframe is not present.
+ *
+ * Waits briefly for the iframe to appear, since the editor loads asynchronously.
  */
-export const getEditorCanvas = (page) =>
-  page.frameLocator('iframe[name="editor-canvas"]');
+export const getEditorCanvas = async (page) => {
+  const canvasIframe = page.locator('iframe[name="editor-canvas"]');
+  try {
+    await canvasIframe.waitFor({ state: "attached", timeout: 5000 });
+    return page.frameLocator('iframe[name="editor-canvas"]');
+  } catch {
+    return page;
+  }
+};
 
 /**
  * Opens the editor settings sidebar if it's not already open.

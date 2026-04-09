@@ -18,5 +18,6 @@ test("Top featured post and edit homepage", {
     // Click "Edit Page" to edit the homepage in the editor.
     await page.locator('#wp-admin-bar-edit a').click();
     // Check that our post title is there in the editor.
-    await expect(getEditorCanvas(page).locator('.wp-block-newspack-blocks-homepage-articles').first().filter({ hasText: featuredPostTitle })).toBeVisible();
+    const editor = await getEditorCanvas(page);
+    await expect(editor.locator('.wp-block-newspack-blocks-homepage-articles').first().filter({ hasText: featuredPostTitle })).toBeVisible();
 });
