@@ -15,6 +15,27 @@ export const logIn = async (page) => {
   await page.waitForURL(/\/wp-admin/);
 };
 
+/**
+ * Returns a FrameLocator for the block editor canvas.
+ * WordPress 6.4+ renders the editor content inside iframe[name="editor-canvas"].
+ */
+export const getEditorCanvas = (page) =>
+  page.frameLocator('iframe[name="editor-canvas"]');
+
+/**
+ * Opens the editor settings sidebar if it's not already open.
+ * In WP 7.0+, the sidebar is closed by default even on desktop.
+ */
+export const openEditorSettings = async (page) => {
+  const settingsToggle = page.getByLabel("Settings", { exact: true });
+  if (await settingsToggle.isVisible()) {
+    const pressed = await settingsToggle.getAttribute("aria-pressed");
+    if (pressed !== "true") {
+      await settingsToggle.click();
+    }
+  }
+};
+
 export const logOut = async (page) => {
   await page.goto("/?action=logout_without_nonce");
 };

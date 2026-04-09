@@ -31,7 +31,7 @@ test("Register on the site", {
     "Success! Your account was created and you’re signed in."
   );
   await page.getByRole("link", { name: "Continue" }).click();
-  await page.getByRole("link", { name: "My Account" }).click();
+  await page.getByRole("link", { name: "My Account" }).last().click();
   await page.waitForURL(/my-account/);
   await clickMyAccountMenuItem(page, "Sign out");
 
@@ -58,7 +58,7 @@ test("Register on the site", {
   /**
    * Now the user is authenticated via the magic link, they can update their name.
    */
-  await page.getByRole("link", { name: "My Account" }).click();
+  await page.getByRole("link", { name: "My Account" }).last().click();
   await page.waitForURL(/my-account/);
   await page.getByPlaceholder("Your First Name").click();
   await page.getByPlaceholder("Your First Name").fill("John");
@@ -112,7 +112,7 @@ test("Register on the site", {
     "Success! You’re signed in."
   );
   await page.getByRole("link", { name: "Continue" }).click();
-  await page.getByRole("link", { name: "My Account" }).click();
+  await page.getByRole("link", { name: "My Account" }).last().click();
   await page.waitForURL(/my-account/);
 
   /**

@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { logIn, goToAdminMenu, isMobileAdmin } from "./utils-admin";
+import { logIn, goToAdminMenu, isMobileAdmin, getEditorCanvas, openEditorSettings } from "./utils-admin";
 import { randomString } from "./utils";
 
 test("Create and view a prompt",  {
@@ -25,32 +25,24 @@ test("Create and view a prompt",  {
   const randomId = randomString(4);
   const campaignBody = `This is prompt content (#${randomId})`;
   const campaignTitle = `Prompt #${randomId}`;
-  await page.getByLabel("Add title").fill(campaignTitle);
-  await page.getByLabel("Add default block").click();
-  await page.getByLabel("Empty block; start writing or").fill(campaignBody);
+  await getEditorCanvas(page).getByLabel("Add title").fill(campaignTitle);
+  await getEditorCanvas(page).getByLabel("Add default block").click();
+  await getEditorCanvas(page).getByLabel("Empty block; start writing or").fill(campaignBody);
 
-  if (isMobile) {
-    await page.getByLabel("Settings", { exact: true }).click();
-  }
-
+  await openEditorSettings(page);
   await page.getByRole("tab", { name: "Prompt" }).click();
-  const isSettingsPanelOpen = await page.getByText("Prompt type").isVisible();
-  if (!isSettingsPanelOpen) {
-    await page
-      .getByLabel("Editor settings")
-      .getByRole("button", { name: "Settings", exact: true })
-      .click();
+  const settingsPanel = page.getByRole("button", { name: "Settings", exact: true }).last();
+  if ((await settingsPanel.getAttribute("aria-expanded")) === "false") {
+    await settingsPanel.click();
   }
   await page.getByRole("spinbutton", { name: "Delay (seconds)" }).fill("1");
 
   // Preview the prompt.
   await page.getByRole("button", { name: "Preview" }).click();
+  const previewFrame = page.frameLocator('iframe[title="web-preview"]');
   await expect(
-    page
-      .frameLocator('iframe[title="web-preview"]')
-      .getByRole("button", { name: `draft ${campaignBody}` })
+    previewFrame.getByText(campaignBody)
   ).toBeVisible();
-  await expect(page.getByText(campaignBody)).toBeVisible();
   await page.getByLabel("Close Preview").click();
 
   // Publish the prompt.
