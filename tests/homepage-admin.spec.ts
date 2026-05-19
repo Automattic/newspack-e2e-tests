@@ -1,22 +1,37 @@
 import { test, expect } from "@playwright/test";
 
-import {logIn} from "./utils-admin";
+import { logIn } from "./utils-admin";
 
 test("Top featured post and edit homepage", {
         tag: ['@vanilla', '@with-woo'],
     },
-    async ({page}) => {
+    async ({ page }) => {
     await logIn(page);
-    // Go to the homepage and click the featured post.
-    await page.goto('/');
-    await page.locator('.wp-block-newspack-blocks-homepage-articles').first().click();
-    // On the post - grab the title of the post.
-    const featuredPostTitle = await page.locator('h1').textContent();
-    // And go back to the homepage.
-    await page.goto('/');
 
-    // Click "Edit Page" to edit the homepage in the editor.
+    // Go to the homepage and open the first featured post via its title link.
+    await page.goto('/');
+    await page
+      .locator('.wp-block-newspack-blocks-homepage-articles .entry-title a')
+      .first()
+      .click();
+    await page.waitForURL(url => !/\/$/.test(url.pathname));
+
+    // Grab the post title from the post page.
+    const featuredPostTitle = (
+      await page.locator('h1.entry-title').first().textContent()
+    )?.trim() ?? '';
+    expect(featuredPostTitle).not.toBe('');
+
+    // Back to the homepage, then open the page editor via the admin bar.
+    await page.goto('/');
     await page.locator('#wp-admin-bar-edit a').click();
-    // Check that our post title is there in the editor.
-    await expect(page.locator('#editor .wp-block-newspack-blocks-homepage-articles').first().filter({ hasText: featuredPostTitle })).toBeVisible();
+
+    // The block editor canvas is iframed in modern Gutenberg, so look inside it.
+    const editorCanvas = page.frameLocator('iframe[name="editor-canvas"]');
+    await expect(
+      editorCanvas
+        .locator('.wp-block-newspack-blocks-homepage-articles')
+        .first()
+        .filter({ hasText: featuredPostTitle })
+    ).toBeVisible();
 });
