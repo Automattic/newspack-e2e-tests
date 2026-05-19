@@ -7,11 +7,16 @@ import { defineConfig, devices } from "@playwright/test";
 require("dotenv").config();
 
 // Add a delay on CI, so the video recordings are more readable.
-const launchOptions = process.env.CI
+const launchOptions: any = process.env.CI
   ? {
       slowMo: 1000,
     }
-  : {};
+  : {
+      // Local-only: bypass any system PAC / proxy auto-config (macOS often has
+      // an org-wide PAC URL that Chromium consults per request, adding ~2s
+      // latency even when the rule says "direct" for local IPs).
+      args: ['--proxy-server=direct://'],
+    };
 
 /**
  * See https://playwright.dev/docs/test-configuration.

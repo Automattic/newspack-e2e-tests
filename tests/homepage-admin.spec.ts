@@ -26,10 +26,16 @@ test("Top featured post and edit homepage", {
     await page.goto('/');
     await page.locator('#wp-admin-bar-edit a').click();
 
-    // The block editor canvas is iframed in modern Gutenberg, so look inside it.
-    const editorCanvas = page.frameLocator('iframe[name="editor-canvas"]');
+    // Gutenberg iframes the editor canvas in some configurations (block themes,
+    // newer Gutenberg) but not others. Fall back to the top-level page if the
+    // canvas iframe isn't present.
+    await page.locator('#editor').waitFor();
+    const iframedCanvas = await page.locator('iframe[name="editor-canvas"]').count();
+    const editor = iframedCanvas > 0
+      ? page.frameLocator('iframe[name="editor-canvas"]')
+      : page;
     await expect(
-      editorCanvas
+      editor
         .locator('.wp-block-newspack-blocks-homepage-articles')
         .first()
         .filter({ hasText: featuredPostTitle })

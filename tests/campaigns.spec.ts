@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { logIn, goToAdminMenu, isMobileAdmin } from "./utils-admin";
+import { logIn, goToAdminMenu } from "./utils-admin";
 import { randomString } from "./utils";
 
 test("Create and view a prompt",  {
@@ -7,7 +7,6 @@ test("Create and view a prompt",  {
     },
     async ({page}) => {
   await logIn(page);
-  const isMobile = await isMobileAdmin(page);
 
   await goToAdminMenu("Audience", "Campaigns", page);
 
@@ -21,28 +20,38 @@ test("Create and view a prompt",  {
   await page.getByRole("link", { name: "Center Overlay Fixed at the" }).click();
   await page.waitForURL(/post_type=newspack_popups_cpt/);
 
-  // Create the prompt. The editor canvas is iframed in modern Gutenberg.
-  const editorCanvas = page.frameLocator('iframe[name="editor-canvas"]');
+  // Gutenberg iframes the editor canvas in some configurations (block themes,
+  // newer Gutenberg) but not others. Fall back to the top-level page if the
+  // canvas iframe isn't present.
+  await page.locator('#editor').waitFor();
+  const iframedCanvas = await page.locator('iframe[name="editor-canvas"]').count();
+  const editor = iframedCanvas > 0
+    ? page.frameLocator('iframe[name="editor-canvas"]')
+    : page;
+
+  // Create the prompt.
   const randomId = randomString(4);
   const campaignBody = `This is prompt content (#${randomId})`;
   const campaignTitle = `Prompt #${randomId}`;
-  await editorCanvas.getByLabel("Add title").fill(campaignTitle);
-  await editorCanvas.getByLabel("Add default block").click();
-  await editorCanvas.getByLabel("Empty block; start writing or").fill(campaignBody);
+  await editor.getByLabel("Add title").fill(campaignTitle);
+  await editor.getByLabel("Add default block").click();
+  await editor.getByLabel("Empty block; start writing or").fill(campaignBody);
 
-  if (isMobile) {
-    await page.getByLabel("Settings", { exact: true }).click();
+  // The Settings sidebar may be collapsed by default depending on user prefs
+  // (always on mobile; sometimes on desktop after a snapshot load).
+  const promptTab = page.getByRole("tab", { name: "Prompt" });
+  if (!(await promptTab.isVisible())) {
+    await page.getByRole("button", { name: "Settings", exact: true }).first().click();
   }
+  await promptTab.click();
 
-  await page.getByRole("tab", { name: "Prompt" }).click();
-  const isSettingsPanelOpen = await page.getByText("Prompt type").isVisible();
-  if (!isSettingsPanelOpen) {
-    await page
-      .getByLabel("Editor settings")
-      .getByRole("button", { name: "Settings", exact: true })
-      .click();
+  // Inside the Prompt panel the "Settings" group (which contains "Delay") may
+  // start collapsed; expand it if so.
+  const delayInput = page.getByRole("spinbutton", { name: "Delay (seconds)" });
+  if (!(await delayInput.isVisible())) {
+    await page.getByRole("button", { name: "Settings", exact: true }).last().click();
   }
-  await page.getByRole("spinbutton", { name: "Delay (seconds)" }).fill("1");
+  await delayInput.fill("1");
 
   // Preview the prompt.
   await page.getByRole("button", { name: "Preview" }).click();
