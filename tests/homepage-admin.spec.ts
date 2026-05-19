@@ -14,7 +14,7 @@ test("Top featured post and edit homepage", {
       .locator('.wp-block-newspack-blocks-homepage-articles .entry-title a')
       .first()
       .click();
-    await page.waitForURL(url => !/\/$/.test(url.pathname));
+    await page.waitForURL(url => url.pathname !== '/');
 
     // Grab the post title from the post page.
     const featuredPostTitle = (
