@@ -21,13 +21,14 @@ test("Create and view a prompt",  {
   await page.getByRole("link", { name: "Center Overlay Fixed at the" }).click();
   await page.waitForURL(/post_type=newspack_popups_cpt/);
 
-  // Create the prompt.
+  // Create the prompt. The editor canvas is iframed in modern Gutenberg.
+  const editorCanvas = page.frameLocator('iframe[name="editor-canvas"]');
   const randomId = randomString(4);
   const campaignBody = `This is prompt content (#${randomId})`;
   const campaignTitle = `Prompt #${randomId}`;
-  await page.getByLabel("Add title").fill(campaignTitle);
-  await page.getByLabel("Add default block").click();
-  await page.getByLabel("Empty block; start writing or").fill(campaignBody);
+  await editorCanvas.getByLabel("Add title").fill(campaignTitle);
+  await editorCanvas.getByLabel("Add default block").click();
+  await editorCanvas.getByLabel("Empty block; start writing or").fill(campaignBody);
 
   if (isMobile) {
     await page.getByLabel("Settings", { exact: true }).click();
@@ -45,12 +46,11 @@ test("Create and view a prompt",  {
 
   // Preview the prompt.
   await page.getByRole("button", { name: "Preview" }).click();
+  const previewFrame = page.frameLocator('iframe[title="web-preview"]');
   await expect(
-    page
-      .frameLocator('iframe[title="web-preview"]')
-      .getByRole("button", { name: `draft ${campaignBody}` })
+    previewFrame.getByRole("button", { name: `draft ${campaignBody}` })
   ).toBeVisible();
-  await expect(page.getByText(campaignBody)).toBeVisible();
+  await expect(previewFrame.getByText(campaignBody)).toBeVisible();
   await page.getByLabel("Close Preview").click();
 
   // Publish the prompt.
