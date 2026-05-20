@@ -4,8 +4,17 @@
 // others (the classic newspack-theme renders blocks at the top level), so
 // detect it and fall back to the page when there's no canvas iframe.
 export const getEditorCanvas = async (page) => {
-  await page.locator("#editor").waitFor();
-  const isIframed = (await page.locator('iframe[name="editor-canvas"]').count()) > 0;
+  // Wait for the editor root to exist. Use "attached" rather than the default
+  // "visible": on a mobile viewport #editor is a wrapper that doesn't pass the
+  // visibility check even though the editor has loaded.
+  await page.locator("#editor").waitFor({ state: "attached" });
+  // The canvas iframe (block themes / newer Gutenberg) mounts asynchronously;
+  // give it a brief chance to appear before falling back to the page.
+  const isIframed = await page
+    .locator('iframe[name="editor-canvas"]')
+    .waitFor({ state: "attached", timeout: 5000 })
+    .then(() => true)
+    .catch(() => false);
   return isIframed ? page.frameLocator('iframe[name="editor-canvas"]') : page;
 };
 
