@@ -50,8 +50,14 @@ export const isMobile = async (page) =>
   await page.getByRole("button", { name: "Open navigation" }).isVisible();
 
 export const clickMyAccountMenuItem = async (page, label) => {
+  const link = page.getByRole("link", { name: label });
+  // Wait for the account page chrome to render before deciding mobile vs.
+  // desktop. Some flows navigate asynchronously (e.g. after "Save password"),
+  // and evaluating isMobile() against the transitional page returns false, so
+  // the mobile nav drawer never opens and the target link stays off-screen.
+  await link.waitFor({ state: "attached" });
   if (await isMobile(page)) {
     await page.getByRole("button", { name: "Open navigation" }).click();
   }
-  await page.getByRole("link", { name: label }).click();
+  await link.click();
 };
