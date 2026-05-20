@@ -70,10 +70,23 @@ wp --allow-root --skip-plugins --skip-themes term list newspack_popups_taxonomy 
 
 wp --allow-root --skip-plugins config set NP_MANAGER_SNAPSHOTS_ENABLED true --type=constant --raw
 wp --allow-root --skip-plugins config set NP_MANAGER_SNAPSHOTS_EXCLUDE_MEDIA true --type=constant --raw
+# The snapshots admin UI is gated by Newspack_Manager's can_do_something_very_serious(),
+# which on a non-proxied env reduces to NEWSPACK_MANAGER_ADMIN_USERNAME === current user.
+# The suite logs in as ADMIN_USER (admin), so pin the constant to match. On Atomic/staging
+# this is overridden by the a8c-proxy / domain-allowlist branch, so it is a no-op there.
+wp --allow-root --skip-plugins config set NEWSPACK_MANAGER_ADMIN_USERNAME admin --type=constant
+
+# Snapshots store site_url() at creation time and the load handler refuses to
+# ingest a snapshot whose stored URL doesn't match the running site. WP-CLI has
+# is_ssl()===false, so site_url() downgrades to http:// even on an https env,
+# while the browser-driven load runs over https – a scheme mismatch that blocks
+# the load. Pass --url so WP-CLI reports the site's real scheme and stores it.
+# On https staging this matches the live value, so it's a no-op there.
+SNAPSHOT_SITE_URL="$(wp --allow-root --skip-plugins --skip-themes option get home)"
 
 wp --allow-root cache flush
-wp --allow-root newspack-manager site-testing-snapshots delete vanilla
-wp --allow-root newspack-manager site-testing-snapshots create vanilla
+wp --allow-root --url="$SNAPSHOT_SITE_URL" newspack-manager site-testing-snapshots delete vanilla
+wp --allow-root --url="$SNAPSHOT_SITE_URL" newspack-manager site-testing-snapshots create vanilla
 
 echo ""
 echo "Activating third-party plugins"
@@ -141,5 +154,5 @@ wp --allow-root --skip-themes eval "\Newspack\Donations::update_donation_product
 wp --allow-root --skip-plugins --skip-themes option set newspack_donations_billing_fields '["billing_email","billing_first_name","billing_last_name"]' --format=json
 
 wp --allow-root cache flush
-wp --allow-root newspack-manager site-testing-snapshots delete with-woo
-wp --allow-root newspack-manager site-testing-snapshots create with-woo
+wp --allow-root --url="$SNAPSHOT_SITE_URL" newspack-manager site-testing-snapshots delete with-woo
+wp --allow-root --url="$SNAPSHOT_SITE_URL" newspack-manager site-testing-snapshots create with-woo
