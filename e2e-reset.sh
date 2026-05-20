@@ -77,8 +77,26 @@ wp --allow-root newspack-manager site-testing-snapshots create vanilla
 
 echo ""
 echo "Activating third-party plugins"
-wp --allow-root --skip-themes plugin install --activate woocommerce woocommerce-gateway-stripe
-wp --allow-root --skip-themes plugin activate woocommerce-subscriptions woocommerce-memberships woocommerce-name-your-price
+
+# Activate WooCommerce and its extensions. Local newspack-docker envs pre-bundle these
+# plugins but leave them inactive, and block plugin installs/updates – so we activate
+# what is already installed and only fall back to install when a plugin is genuinely
+# missing (e.g. CI envs that don't bundle them). Failures never abort the script.
+activate_plugin() {
+  local slug="$1"
+  if wp --allow-root --skip-plugins --skip-themes plugin is-installed "$slug" 2>/dev/null; then
+    wp --allow-root --skip-themes plugin activate "$slug" || true
+  else
+    wp --allow-root --skip-themes plugin install --activate "$slug" || true
+  fi
+}
+
+# WooCommerce core must be active before its extensions (subscriptions, stripe,
+# memberships, name-your-price all require WooCommerce to activate).
+activate_plugin woocommerce
+for wc_extension in woocommerce-gateway-stripe woocommerce-subscriptions woocommerce-memberships woocommerce-name-your-price; do
+  activate_plugin "$wc_extension"
+done
 wp --allow-root cache flush
 
 echo ""

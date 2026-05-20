@@ -101,3 +101,4 @@ The test site can be reset by running the `e2e-reset.sh` script. Please note tha
 STRIPE_PUB_KEY=<the-pub-key>
 STRIPE_SECRECT_KEY=<tha-secret-key>
 ```
+Without these keys the Stripe gateway is left unconfigured, so `@with-woo` tests that complete a checkout (e.g. `donations.spec.ts`) cannot pass. Tests that only exercise the reader/account flow (e.g. `reader-registration.spec.ts`) do not need them.
