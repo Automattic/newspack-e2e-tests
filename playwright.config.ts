@@ -56,6 +56,9 @@ export default defineConfig({
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: process.env.SITE_URL,
 
+    /* Applied to every project (including the snapshot-setup projects). */
+    launchOptions,
+
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: process.env.CI ? "on-first-retry" : "retain-on-failure",
     video: "retain-on-failure",
@@ -85,7 +88,6 @@ export default defineConfig({
       name: "Vanilla in Desktop Chrome",
       use: {
         ...devices["Desktop Chrome"],
-        launchOptions,
       },
       grep: /@vanilla/,
       dependencies: process.env.USE_SNAPSHOTS ? ["setup-vanilla"] : [],
@@ -94,7 +96,6 @@ export default defineConfig({
       name: "Vanilla in Mobile Chrome",
       use: {
         ...devices["Pixel 5"],
-        launchOptions,
       },
       grep: /@vanilla/,
       dependencies: process.env.USE_SNAPSHOTS
@@ -107,7 +108,6 @@ export default defineConfig({
       name: "With Woo in Desktop Chrome",
       use: {
         ...devices["Desktop Chrome"],
-        launchOptions,
       },
       grep: /@with-woo/,
       dependencies: process.env.USE_SNAPSHOTS ? ["setup-with-woo"] : [],
@@ -116,7 +116,6 @@ export default defineConfig({
       name: "With Woo in Mobile Chrome",
       use: {
         ...devices["Pixel 5"],
-        launchOptions,
       },
       grep: /@with-woo/,
       dependencies: process.env.USE_SNAPSHOTS
