@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { logIn, goToAdminMenu, isMobileAdmin } from "./utils-admin";
+import { logIn, goToAdminMenu, getEditorCanvas } from "./utils-admin";
 import { randomString } from "./utils";
 
 test("Create and view a prompt",  {
@@ -7,7 +7,6 @@ test("Create and view a prompt",  {
     },
     async ({page}) => {
   await logIn(page);
-  const isMobile = await isMobileAdmin(page);
 
   await goToAdminMenu("Audience", "Campaigns", page);
 
@@ -21,36 +20,48 @@ test("Create and view a prompt",  {
   await page.getByRole("link", { name: "Center Overlay Fixed at the" }).click();
   await page.waitForURL(/post_type=newspack_popups_cpt/);
 
+  const editor = await getEditorCanvas(page);
+
   // Create the prompt.
   const randomId = randomString(4);
   const campaignBody = `This is prompt content (#${randomId})`;
   const campaignTitle = `Prompt #${randomId}`;
-  await page.getByLabel("Add title").fill(campaignTitle);
-  await page.getByLabel("Add default block").click();
-  await page.getByLabel("Empty block; start writing or").fill(campaignBody);
+  await editor.getByLabel("Add title").fill(campaignTitle);
+  await editor.getByLabel("Add default block").click();
+  await editor.getByLabel("Empty block; start writing or").fill(campaignBody);
 
-  if (isMobile) {
-    await page.getByLabel("Settings", { exact: true }).click();
-  }
-
-  await page.getByRole("tab", { name: "Prompt" }).click();
-  const isSettingsPanelOpen = await page.getByText("Prompt type").isVisible();
-  if (!isSettingsPanelOpen) {
+  // The Settings sidebar may be collapsed by default depending on user prefs
+  // (always on mobile; sometimes on desktop after a snapshot load). Open it via
+  // the top-bar toggle, scoped to the editor top bar so DOM order can't pick a
+  // different "Settings" control.
+  const promptTab = page.getByRole("tab", { name: "Prompt" });
+  if (!(await promptTab.isVisible())) {
     await page
-      .getByLabel("Editor settings")
+      .getByRole("region", { name: "Editor top bar" })
       .getByRole("button", { name: "Settings", exact: true })
       .click();
   }
-  await page.getByRole("spinbutton", { name: "Delay (seconds)" }).fill("1");
+  await promptTab.click();
+
+  // Inside the Prompt panel the "Settings" group (which contains "Delay") may
+  // start collapsed; expand it if so. Scope to the Prompt tabpanel so this
+  // targets the group expander, not the top-bar toggle or another panel.
+  const promptPanel = page.getByRole("tabpanel", { name: "Prompt" });
+  const delayInput = page.getByRole("spinbutton", { name: "Delay (seconds)" });
+  if (!(await delayInput.isVisible())) {
+    await promptPanel
+      .getByRole("button", { name: "Settings", exact: true })
+      .click();
+  }
+  await delayInput.fill("1");
 
   // Preview the prompt.
   await page.getByRole("button", { name: "Preview" }).click();
+  const previewFrame = page.frameLocator('iframe[title="web-preview"]');
   await expect(
-    page
-      .frameLocator('iframe[title="web-preview"]')
-      .getByRole("button", { name: `draft ${campaignBody}` })
+    previewFrame.getByRole("button", { name: `draft ${campaignBody}` })
   ).toBeVisible();
-  await expect(page.getByText(campaignBody)).toBeVisible();
+  await expect(previewFrame.getByText(campaignBody)).toBeVisible();
   await page.getByLabel("Close Preview").click();
 
   // Publish the prompt.

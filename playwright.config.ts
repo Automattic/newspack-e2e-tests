@@ -1,4 +1,4 @@
-import { defineConfig, devices } from "@playwright/test";
+import { defineConfig, devices, LaunchOptions } from "@playwright/test";
 
 /**
  * Read environment variables from file.
@@ -6,10 +6,30 @@ import { defineConfig, devices } from "@playwright/test";
  */
 require("dotenv").config();
 
+// Whether the target site is a local env (a *.local host or a loopback IP). We
+// only tweak proxy behavior for these.
+const isLocalTarget = (() => {
+  try {
+    const { hostname } = new URL(process.env.SITE_URL ?? "");
+    return hostname.endsWith(".local") || /^127\.|^localhost$/.test(hostname);
+  } catch {
+    return false;
+  }
+})();
+
 // Add a delay on CI, so the video recordings are more readable.
-const launchOptions = process.env.CI
+const launchOptions: LaunchOptions = process.env.CI
   ? {
       slowMo: 1000,
+    }
+  : isLocalTarget
+  ? {
+      // Bypass any system PAC / proxy auto-config when targeting a local env.
+      // macOS often has an org-wide PAC URL that Chromium consults per request,
+      // adding ~2s of latency even when the rule resolves to "direct" for local
+      // IPs. Scoped to local targets so it can't break proxy-dependent setups
+      // that need a proxy to reach the internet.
+      args: ["--proxy-server=direct://"],
     }
   : {};
 
@@ -35,6 +55,9 @@ export default defineConfig({
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: process.env.SITE_URL,
+
+    /* Applied to every project (including the snapshot-setup projects). */
+    launchOptions,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: process.env.CI ? "on-first-retry" : "retain-on-failure",
@@ -65,7 +88,6 @@ export default defineConfig({
       name: "Vanilla in Desktop Chrome",
       use: {
         ...devices["Desktop Chrome"],
-        launchOptions,
       },
       grep: /@vanilla/,
       dependencies: process.env.USE_SNAPSHOTS ? ["setup-vanilla"] : [],
@@ -74,7 +96,6 @@ export default defineConfig({
       name: "Vanilla in Mobile Chrome",
       use: {
         ...devices["Pixel 5"],
-        launchOptions,
       },
       grep: /@vanilla/,
       dependencies: process.env.USE_SNAPSHOTS
@@ -87,7 +108,6 @@ export default defineConfig({
       name: "With Woo in Desktop Chrome",
       use: {
         ...devices["Desktop Chrome"],
-        launchOptions,
       },
       grep: /@with-woo/,
       dependencies: process.env.USE_SNAPSHOTS ? ["setup-with-woo"] : [],
@@ -96,7 +116,6 @@ export default defineConfig({
       name: "With Woo in Mobile Chrome",
       use: {
         ...devices["Pixel 5"],
-        launchOptions,
       },
       grep: /@with-woo/,
       dependencies: process.env.USE_SNAPSHOTS

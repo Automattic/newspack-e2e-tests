@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-import { logIn } from "./utils-admin";
+import { logIn, getEditorCanvas } from "./utils-admin";
 
 test("Top featured post and edit homepage", {
         tag: ['@vanilla', '@with-woo'],
@@ -26,10 +26,9 @@ test("Top featured post and edit homepage", {
     await page.goto('/');
     await page.locator('#wp-admin-bar-edit a').click();
 
-    // The block editor canvas is iframed in modern Gutenberg, so look inside it.
-    const editorCanvas = page.frameLocator('iframe[name="editor-canvas"]');
+    const editor = await getEditorCanvas(page);
     await expect(
-      editorCanvas
+      editor
         .locator('.wp-block-newspack-blocks-homepage-articles')
         .first()
         .filter({ hasText: featuredPostTitle })
