@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { logIn, goToAdminMenu } from "./utils-admin";
+import { logIn, goToAdminMenu, getEditorCanvas } from "./utils-admin";
 import { randomString } from "./utils";
 
 test("Create and view a prompt",  {
@@ -20,14 +20,7 @@ test("Create and view a prompt",  {
   await page.getByRole("link", { name: "Center Overlay Fixed at the" }).click();
   await page.waitForURL(/post_type=newspack_popups_cpt/);
 
-  // Gutenberg iframes the editor canvas in some configurations (block themes,
-  // newer Gutenberg) but not others. Fall back to the top-level page if the
-  // canvas iframe isn't present.
-  await page.locator('#editor').waitFor();
-  const iframedCanvas = await page.locator('iframe[name="editor-canvas"]').count();
-  const editor = iframedCanvas > 0
-    ? page.frameLocator('iframe[name="editor-canvas"]')
-    : page;
+  const editor = await getEditorCanvas(page);
 
   // Create the prompt.
   const randomId = randomString(4);
@@ -38,18 +31,27 @@ test("Create and view a prompt",  {
   await editor.getByLabel("Empty block; start writing or").fill(campaignBody);
 
   // The Settings sidebar may be collapsed by default depending on user prefs
-  // (always on mobile; sometimes on desktop after a snapshot load).
+  // (always on mobile; sometimes on desktop after a snapshot load). Open it via
+  // the top-bar toggle, scoped to the editor top bar so DOM order can't pick a
+  // different "Settings" control.
   const promptTab = page.getByRole("tab", { name: "Prompt" });
   if (!(await promptTab.isVisible())) {
-    await page.getByRole("button", { name: "Settings", exact: true }).first().click();
+    await page
+      .getByRole("region", { name: "Editor top bar" })
+      .getByRole("button", { name: "Settings", exact: true })
+      .click();
   }
   await promptTab.click();
 
   // Inside the Prompt panel the "Settings" group (which contains "Delay") may
-  // start collapsed; expand it if so.
+  // start collapsed; expand it if so. Scope to the Prompt tabpanel so this
+  // targets the group expander, not the top-bar toggle or another panel.
+  const promptPanel = page.getByRole("tabpanel", { name: "Prompt" });
   const delayInput = page.getByRole("spinbutton", { name: "Delay (seconds)" });
   if (!(await delayInput.isVisible())) {
-    await page.getByRole("button", { name: "Settings", exact: true }).last().click();
+    await promptPanel
+      .getByRole("button", { name: "Settings", exact: true })
+      .click();
   }
   await delayInput.fill("1");
 

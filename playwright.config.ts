@@ -1,4 +1,4 @@
-import { defineConfig, devices } from "@playwright/test";
+import { defineConfig, devices, LaunchOptions } from "@playwright/test";
 
 /**
  * Read environment variables from file.
@@ -6,17 +6,32 @@ import { defineConfig, devices } from "@playwright/test";
  */
 require("dotenv").config();
 
+// Whether the target site is a local env (a *.local host or a loopback IP). We
+// only tweak proxy behavior for these.
+const isLocalTarget = (() => {
+  try {
+    const { hostname } = new URL(process.env.SITE_URL ?? "");
+    return hostname.endsWith(".local") || /^127\.|^localhost$/.test(hostname);
+  } catch {
+    return false;
+  }
+})();
+
 // Add a delay on CI, so the video recordings are more readable.
-const launchOptions: any = process.env.CI
+const launchOptions: LaunchOptions = process.env.CI
   ? {
       slowMo: 1000,
     }
-  : {
-      // Local-only: bypass any system PAC / proxy auto-config (macOS often has
-      // an org-wide PAC URL that Chromium consults per request, adding ~2s
-      // latency even when the rule says "direct" for local IPs).
-      args: ['--proxy-server=direct://'],
-    };
+  : isLocalTarget
+  ? {
+      // Bypass any system PAC / proxy auto-config when targeting a local env.
+      // macOS often has an org-wide PAC URL that Chromium consults per request,
+      // adding ~2s of latency even when the rule resolves to "direct" for local
+      // IPs. Scoped to local targets so it can't break proxy-dependent setups
+      // that need a proxy to reach the internet.
+      args: ["--proxy-server=direct://"],
+    }
+  : {};
 
 /**
  * See https://playwright.dev/docs/test-configuration.

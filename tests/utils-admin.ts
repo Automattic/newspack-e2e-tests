@@ -1,4 +1,14 @@
 
+// Return the locator scope for the block editor content. Gutenberg iframes the
+// editor canvas in some configurations (block themes, newer Gutenberg) but not
+// others (the classic newspack-theme renders blocks at the top level), so
+// detect it and fall back to the page when there's no canvas iframe.
+export const getEditorCanvas = async (page) => {
+  await page.locator("#editor").waitFor();
+  const isIframed = (await page.locator('iframe[name="editor-canvas"]').count()) > 0;
+  return isIframed ? page.frameLocator('iframe[name="editor-canvas"]') : page;
+};
+
 // Log in to the admin dashboard.
 export const logIn = async (page) => {
   await page.goto("/wp-login.php");
