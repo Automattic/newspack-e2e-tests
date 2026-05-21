@@ -20,17 +20,23 @@ test(
     const editor = await getEditorCanvas(page);
     await editor.getByLabel("Add title").fill(pageTitle);
 
-    // Use slash command to insert the block inside the editor canvas.
+    // Use slash command to insert the block inside the editor canvas. The block
+    // is titled "Newsletter Subscription Form" with no keywords, so the inserter
+    // matches on the title -- search "subscription" ("subscribe" does not match
+    // the "Subscription" title token).
     await editor.getByLabel("Add default block").click();
-    await page.keyboard.type("/subscribe");
+    await page.keyboard.type("/subscription");
     await page
       .getByRole("option", { name: /Newsletter Subscription/i })
       .first()
       .click();
 
-    // Verify the block renders in the editor.
+    // Verify the block renders in the editor. Re-acquire the canvas scope: the
+    // editor-canvas iframe can remount right after a block insert, which
+    // invalidates a frame locator captured earlier.
+    const editorAfterInsert = await getEditorCanvas(page);
     await expect(
-      editor.locator('[data-type="newspack-newsletters/subscribe"]')
+      editorAfterInsert.locator(".wp-block-newspack-newsletters-subscribe")
     ).toBeVisible({ timeout: 10000 });
 
     // Publish the page.

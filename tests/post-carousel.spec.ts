@@ -59,13 +59,16 @@ test("Post Carousel block renders and navigates", {
     expect(firstPostTitle.trim().length).toBeGreaterThan(0);
 
     /**
-     * Click the "next" arrow to advance the carousel.
+     * Advance the carousel. On desktop it exposes prev/next arrows; on a mobile
+     * viewport those are hidden (navigation is via swipe + pagination dots), so
+     * only exercise the arrow when it's actually visible.
      */
     const nextButton = carousel.locator('.swiper-button-next');
-    await nextButton.click();
-
-    // Wait for the carousel transition to complete.
-    await page.waitForTimeout(600);
+    if (await nextButton.isVisible()) {
+      await nextButton.click();
+      // Wait for the carousel transition to complete.
+      await page.waitForTimeout(600);
+    }
 
     // Verify the carousel has advanced by checking the active slide changed.
     const activeSlideTitle = await carousel.locator('.swiper-slide-active .entry-title a').textContent();

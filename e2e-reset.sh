@@ -17,6 +17,9 @@ fi
 echo ""
 echo "Activating Newspack plugins"
 wp --allow-root --skip-plugins --skip-themes plugin activate newspack-plugin newspack-blocks newspack-popups newspack-ads newspack-newsletters newspack-manager
+# newspack-sponsors backs the sponsors spec. It's a separate (tolerant) step since
+# not every environment bundles it; failures here must not abort the reset.
+wp --allow-root --skip-plugins --skip-themes plugin activate newspack-sponsors || true
 
 echo ""
 echo "Setting up Newspack"

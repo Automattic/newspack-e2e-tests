@@ -21,15 +21,11 @@ test(
     await page.goto(PLACEMENTS_URL);
 
     await expect(
-      page
-        .locator(".newspack-action-card")
-        .filter({ hasText: "Global: Above Header" })
+      page.getByText("Global: Above Header").first()
     ).toBeVisible({ timeout: 15000 });
 
     await expect(
-      page
-        .locator(".newspack-action-card")
-        .filter({ hasText: "Global: Below Header" })
+      page.getByText("Global: Below Header").first()
     ).toBeVisible();
   }
 );

@@ -6,7 +6,10 @@ const getPageInIframe = (page) =>
 
 const getStripeIframeCard = (page) =>
   getPageInIframe(page).frameLocator(
-    `[data-payment-method-type="card"] [title="Secure payment input frame"]`
+    // Stripe Elements renders an extra aria-hidden "Secure payment input frame"
+    // (the ACH bank-search results frame) alongside the card input frame, so
+    // exclude hidden frames to keep this matching a single element.
+    `[data-payment-method-type="card"] [title="Secure payment input frame"]:not([aria-hidden="true"])`
   );
 
 const emailAddress = randomEmailAddress();
