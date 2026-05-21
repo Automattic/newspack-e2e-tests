@@ -5,7 +5,12 @@ const getPageInIframe = (page) =>
   page.frameLocator('iframe[name="newspack_modal_checkout_iframe"]');
 
 const getStripeIframeCard = (page) =>
-  getPageInIframe(page).frameLocator(`[data-payment-method-type="card"] [title="Secure payment input frame"]`);
+  getPageInIframe(page).frameLocator(
+    // Stripe Elements renders an extra aria-hidden "Secure payment input frame"
+    // (the ACH bank-search results frame) alongside the card input frame, so
+    // exclude hidden frames to keep this matching a single element.
+    `[data-payment-method-type="card"] [title="Secure payment input frame"]:not([aria-hidden="true"])`
+  );
 
 const emailAddress = randomEmailAddress();
 
