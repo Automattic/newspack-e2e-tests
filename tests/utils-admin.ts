@@ -59,6 +59,13 @@ export const goToAdminMenu = async (menuItem, submenuItem, page) => {
 export const loadSnapshot = async (page, snapshotName: string) => {
   console.log(`Setting up snapshot: ${snapshotName}`);
 
+  // Clear any pending DB upgrade before we start. If the site's core was
+  // updated without the schema upgrade running (e.g. after a WP major bump),
+  // wp-admin redirects everything to upgrade.php and the snapshots page would
+  // appear empty. Running it before login also avoids logging ourselves out,
+  // since the upgrade invalidates existing sessions.
+  await ensureDatabaseUpgraded(page);
+
   await logIn(page);
   await page.goto('/wp-admin/tools.php?page=newspack-snapshots');
 
@@ -82,11 +89,34 @@ export const loadSnapshot = async (page, snapshotName: string) => {
   await loadLink.waitFor({state: 'visible'});
   await loadLink.click();
 
-  // Add a small wait to ensure dialog handling completes.
-  await page.waitForTimeout(1000);
-  // And wait for the page to load after the snapshot is loaded. We should be logged out and on the login page.
-  await page.waitForSelector('label:text("Username or Email Address")');
+  // Loading the snapshot replaces the DB with the dump captured when the
+  // snapshot was created, which invalidates the current session. Where we land
+  // next depends on the snapshot's age:
+  //  - if its schema matches the running core, WordPress logs us out and we end
+  //    on the login page;
+  //  - if the snapshot predates the current core (older db_version), the DB
+  //    version check in wp-admin/admin.php runs before auth and redirects every
+  //    wp-admin request to upgrade.php instead.
+  // Wait for either outcome to confirm the load (and its redirect chain) is done.
+  await page.waitForURL(/wp-login\.php|upgrade\.php/, {timeout: 60000});
+
+  // Clear any pending DB upgrade the restored dump introduced, so the freshly
+  // loaded site is reachable for the tests that follow.
+  await ensureDatabaseUpgraded(page);
 
   console.log(`Done loading snapshot: ${snapshotName}`);
   return true;
+};
+
+// Run WordPress' database schema upgrade if one is pending.
+//
+// A snapshot is dumped at the core version it was created on, so loading one
+// can roll `db_version` back below the running core's. WordPress then flags a
+// pending upgrade and redirects every wp-admin request to upgrade.php until the
+// upgrade runs. `upgrade.php?step=1` runs it directly: it needs no auth or
+// nonce (it is meant to run mid-upgrade, before login) and is a no-op
+// ("already up to date") when nothing is pending, so it is always safe to call.
+export const ensureDatabaseUpgraded = async (page) => {
+  await page.goto('/wp-admin/upgrade.php?step=1');
+  await page.waitForLoadState('domcontentloaded');
 };
