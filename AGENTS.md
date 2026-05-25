@@ -70,8 +70,3 @@ docker exec newspack_env_e2e_release bash -c '
 
 (Back up the dump dir first; restore it after.) Loading it then reproduces the
 post-core-bump `upgrade.php` redirect.
-
-## See also
-
-- `LOCAL-CI-SNAPSHOT-PARITY.md` – scratch notes on local↔CI parity blockers
-  (proxy bypass, the snapshot admin-UI security gate, the URL-scheme match on load).
