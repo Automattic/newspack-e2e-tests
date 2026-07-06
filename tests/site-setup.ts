@@ -42,25 +42,29 @@ const containerForHost = (siteUrl: string): string => {
   return `newspack_env_${name}`;
 };
 
+// POSIX-quote a string so it survives interpolation into a remote shell command.
+// (JSON.stringify is NOT a shell quoter: inside double quotes the remote shell still
+// expands $, backticks and backslashes, which would corrupt e.g. a password with a $.)
+const shQuote = (s: string): string => `'${s.replace(/'/g, `'\\''`)}'`;
+
 // Build the argument list passed through to e2e-setup.sh.
-const scriptArgs = (woo: boolean): string[] => {
-  const args = [
-    woo ? "--woo" : "--no-woo",
-    "--url",
-    process.env.SITE_URL as string,
-    "--admin-user",
-    process.env.ADMIN_USER as string,
-    "--admin-password",
-    process.env.ADMIN_PASSWORD as string,
-  ];
-  return args;
-};
+const scriptArgs = (woo: boolean): string[] => [
+  woo ? "--woo" : "--no-woo",
+  "--url",
+  process.env.SITE_URL as string,
+  "--admin-user",
+  process.env.ADMIN_USER as string,
+  "--admin-password",
+  process.env.ADMIN_PASSWORD as string,
+];
 
 export const setupSite = ({ woo }: SetupOptions): void => {
-  const siteUrl = process.env.SITE_URL;
-  if (!siteUrl) {
-    throw new Error("SITE_URL must be set to provision the site.");
+  for (const key of ["SITE_URL", "ADMIN_USER", "ADMIN_PASSWORD"]) {
+    if (!process.env[key]) {
+      throw new Error(`${key} must be set to provision the site.`);
+    }
   }
+  const siteUrl = process.env.SITE_URL as string;
 
   const script = readFileSync(SCRIPT_PATH);
   const args = scriptArgs(woo);
@@ -94,23 +98,25 @@ export const setupSite = ({ woo }: SetupOptions): void => {
 
   const inlineEnv = stripeEnv
     .filter((v) => process.env[v])
-    .map((v) => `${v}=${JSON.stringify(process.env[v])}`)
+    .map((v) => `${v}=${shQuote(process.env[v] as string)}`)
     .join(" ");
-  const remoteCmd = `cd ${wpPath} && ${inlineEnv} bash -s -- ${args
-    .map((a) => JSON.stringify(a))
+  const remoteCmd = `cd ${shQuote(wpPath)} && ${inlineEnv} bash -s -- ${args
+    .map(shQuote)
     .join(" ")} --reset clean`;
 
   const sshArgs = ["-o", "StrictHostKeyChecking=no", `${user}@${host}`, remoteCmd];
-  if (pass) {
-    // Password auth via sshpass (the CI credential model).
-    execFileSync("sshpass", ["-p", pass, "ssh", ...sshArgs], {
-      input: script,
-      stdio: ["pipe", "inherit", "inherit"],
-    });
-  } else {
-    execFileSync("ssh", sshArgs, {
-      input: script,
-      stdio: ["pipe", "inherit", "inherit"],
-    });
+  const [cmd, cmdArgs] = pass
+    ? // Password auth via sshpass (the CI credential model).
+      ["sshpass", ["-p", pass, "ssh", ...sshArgs]]
+    : ["ssh", sshArgs];
+  try {
+    execFileSync(cmd, cmdArgs, { input: script, stdio: ["pipe", "inherit", "inherit"] });
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code === "ENOENT" && cmd === "sshpass") {
+      throw new Error(
+        "sshpass is required for E2E_SSH_PASS auth but was not found on PATH. Install sshpass, or use key-based SSH (unset E2E_SSH_PASS)."
+      );
+    }
+    throw err;
   }
 };

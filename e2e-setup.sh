@@ -117,8 +117,15 @@ wp --skip-themes option update timezone_string 'America/New_York'
 
 # Activate the remaining Newspack plugins the suite exercises, plus the e2e helper
 # plugin (custom logout endpoint, outgoing-email log, admin-email-check bypass).
+# These are hard dependencies of the suite (e2e-plugin in particular drives the
+# reader-registration email flow), so fail loudly rather than leaving a site that
+# breaks confusingly deep in a test. `wp plugin activate` is a no-op success when
+# the plugin is already active.
 for plugin in newspack-ads newspack-newsletters newspack-manager e2e-plugin; do
-  wp --skip-themes plugin activate "$plugin" || echo "WARNING: could not activate $plugin"
+  wp --skip-themes plugin activate "$plugin" || {
+    echo "ERROR: could not activate required plugin '$plugin' - is it installed on the site?" >&2
+    exit 1
+  }
 done
 
 # Run Newspack's own setup routine (creates default pages/config the wizard would).
@@ -137,8 +144,11 @@ if [ "$WOO" = true ]; then
 
   # Activate the Stripe gateway. site-setup.sh doesn't (it's not part of the
   # generic Newspack bootstrap), but the @with-woo donation tests need a gateway
-  # that supports subscriptions.
-  wp --skip-themes plugin activate woocommerce-gateway-stripe || echo "WARNING: could not activate woocommerce-gateway-stripe"
+  # that supports subscriptions, so treat a failure to activate as fatal.
+  wp --skip-themes plugin activate woocommerce-gateway-stripe || {
+    echo "ERROR: could not activate woocommerce-gateway-stripe - is it installed on the site?" >&2
+    exit 1
+  }
 
   # Options site-setup.sh doesn't set but the suite relies on.
   wp --skip-plugins --skip-themes option update woocommerce_coming_soon 'no'
@@ -148,7 +158,7 @@ if [ "$WOO" = true ]; then
   wp --skip-plugins --skip-themes option update woocommerce_show_marketplace_suggestions 'no'
   wp --skip-plugins --skip-themes option update wc_memberships_admin_restricted_content_notice 'no'
 
-  if [ -n "$STRIPE_PUB_KEY" ]; then
+  if [ -n "$STRIPE_PUB_KEY" ] && [ -n "$STRIPE_SECRECT_KEY" ]; then
     echo "==> Configuring Stripe test gateway"
     wp --skip-plugins --skip-themes option update woocommerce_stripe_settings '{
       "title": "Credit Card (Stripe test mode)",
