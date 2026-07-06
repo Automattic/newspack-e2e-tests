@@ -56,7 +56,7 @@ export default defineConfig({
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: process.env.SITE_URL,
 
-    /* Applied to every project (including the snapshot-setup projects). */
+    /* Applied to every project (including the setup projects). */
     launchOptions,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
@@ -66,19 +66,25 @@ export default defineConfig({
   },
   timeout: 120000,
   expect: { timeout: 20000 },
-  /* Note that projects depend on each other if we are using snapshots. Vanilla needs to run first and then with Woo.  */
+  /* Note that projects depend on each other when provisioning is enabled: the
+     vanilla site is set up and its tests run first, then the site is re-provisioned
+     with WooCommerce and those tests run. */
   projects: [
-    // These two projects are used to set up the environment for the tests.
+    // These two projects provision the site into the state their tests expect.
+    // Re-provisioning from scratch is much slower than the browser actions in a
+    // regular test, so give them a generous timeout.
     {
       name: "setup-vanilla",
       testMatch: "vanilla.ts",
       testDir: "./setup",
+      timeout: 900000,
     },
     {
       name: "setup-with-woo",
       testMatch: "with-woo.ts",
       testDir: "./setup",
-      dependencies: process.env.USE_SNAPSHOTS
+      timeout: 900000,
+      dependencies: process.env.USE_SETUP
         ? ["Vanilla in Mobile Chrome"]
         : [],
     },
@@ -90,7 +96,7 @@ export default defineConfig({
         ...devices["Desktop Chrome"],
       },
       grep: /@vanilla/,
-      dependencies: process.env.USE_SNAPSHOTS ? ["setup-vanilla"] : [],
+      dependencies: process.env.USE_SETUP ? ["setup-vanilla"] : [],
     },
     {
       name: "Vanilla in Mobile Chrome",
@@ -98,7 +104,7 @@ export default defineConfig({
         ...devices["Pixel 5"],
       },
       grep: /@vanilla/,
-      dependencies: process.env.USE_SNAPSHOTS
+      dependencies: process.env.USE_SETUP
         ? ["Vanilla in Desktop Chrome"]
         : [],
     },
@@ -110,7 +116,7 @@ export default defineConfig({
         ...devices["Desktop Chrome"],
       },
       grep: /@with-woo/,
-      dependencies: process.env.USE_SNAPSHOTS ? ["setup-with-woo"] : [],
+      dependencies: process.env.USE_SETUP ? ["setup-with-woo"] : [],
     },
     {
       name: "With Woo in Mobile Chrome",
@@ -118,7 +124,7 @@ export default defineConfig({
         ...devices["Pixel 5"],
       },
       grep: /@with-woo/,
-      dependencies: process.env.USE_SNAPSHOTS
+      dependencies: process.env.USE_SETUP
         ? ["With Woo in Desktop Chrome"]
         : [],
     },
