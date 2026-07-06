@@ -134,6 +134,12 @@ wp --skip-plugins --skip-themes option update blogname "The Daily Test: $(date -
 
 if [ "$WOO" = true ]; then
   echo "==> Applying e2e WooCommerce configuration"
+
+  # Activate the Stripe gateway. site-setup.sh doesn't (it's not part of the
+  # generic Newspack bootstrap), but the @with-woo donation tests need a gateway
+  # that supports subscriptions.
+  wp --skip-themes plugin activate woocommerce-gateway-stripe || echo "WARNING: could not activate woocommerce-gateway-stripe"
+
   # Options site-setup.sh doesn't set but the suite relies on.
   wp --skip-plugins --skip-themes option update woocommerce_coming_soon 'no'
   wp --skip-plugins --skip-themes option update woocommerce_task_list_hidden 'yes'
