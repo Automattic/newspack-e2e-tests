@@ -158,14 +158,14 @@ if [ "$WOO" = true ]; then
   wp --skip-plugins --skip-themes option update woocommerce_show_marketplace_suggestions 'no'
   wp --skip-plugins --skip-themes option update wc_memberships_admin_restricted_content_notice 'no'
 
-  if [ -n "$STRIPE_PUB_KEY" ] && [ -n "$STRIPE_SECRECT_KEY" ]; then
+  if [ -n "$STRIPE_PUB_KEY" ] && [ -n "$STRIPE_SECRET_KEY" ]; then
     echo "==> Configuring Stripe test gateway"
     wp --skip-plugins --skip-themes option update woocommerce_stripe_settings '{
       "title": "Credit Card (Stripe test mode)",
       "enabled": "yes",
       "testmode": "yes",
       "test_publishable_key": "'"$STRIPE_PUB_KEY"'",
-      "test_secret_key": "'"$STRIPE_SECRECT_KEY"'",
+      "test_secret_key": "'"$STRIPE_SECRET_KEY"'",
       "inline_cc_form": "no",
       "statement_descriptor": "E2E test store",
       "capture": "yes",

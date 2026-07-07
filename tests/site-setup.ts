@@ -69,7 +69,7 @@ export const setupSite = ({ woo }: SetupOptions): void => {
   const script = readFileSync(SCRIPT_PATH);
   const args = scriptArgs(woo);
   // Forward Stripe test keys (if present) into the remote environment.
-  const stripeEnv = ["STRIPE_PUB_KEY", "STRIPE_SECRECT_KEY"];
+  const stripeEnv = ["STRIPE_PUB_KEY", "STRIPE_SECRET_KEY"];
 
   if (isLocalTarget(siteUrl)) {
     const container = containerForHost(siteUrl);

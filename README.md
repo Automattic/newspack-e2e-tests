@@ -120,7 +120,7 @@ Use `--no-woo` for the vanilla state. For the Stripe gateway (needed by
 `.env` or the environment:
 ```
 STRIPE_PUB_KEY=<the-pub-key>
-STRIPE_SECRECT_KEY=<the-secret-key>
+STRIPE_SECRET_KEY=<the-secret-key>
 ```
 Without them the Stripe gateway is left unconfigured. Tests that only exercise the
 reader/account flow (e.g. `reader-registration.spec.ts`) do not need them.
