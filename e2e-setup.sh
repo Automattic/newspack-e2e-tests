@@ -79,17 +79,12 @@ wp() {
   command wp "${WP_GLOBAL_OPTS[@]}" "$@"
 }
 
-# Resolve site-setup.sh. Defaults to the copy shipped inside the installed
-# newspack-manager plugin; override with SITE_SETUP_SCRIPT to point at another copy
-# (e.g. when testing a branch that isn't deployed to the site yet).
-if [ -n "$SITE_SETUP_SCRIPT" ]; then
-  SITE_SETUP="$SITE_SETUP_SCRIPT"
-else
-  PLUGINS_DIR="$(wp --skip-plugins --skip-themes eval 'echo WP_PLUGIN_DIR;')"
-  SITE_SETUP="$PLUGINS_DIR/newspack-manager/scripts/site-setup.sh"
-fi
+# Resolve site-setup.sh. It ships next to this script; setupSite (tests/site-setup.ts)
+# copies both onto the target and points SITE_SETUP_SCRIPT at the copy, and a manual
+# `bash e2e-setup.sh` finds it via this script's own directory.
+SITE_SETUP="${SITE_SETUP_SCRIPT:-$(dirname "$0")/site-setup.sh}"
 if [ ! -f "$SITE_SETUP" ]; then
-  echo "ERROR: site-setup.sh not found at $SITE_SETUP – is newspack-manager installed?" >&2
+  echo "ERROR: site-setup.sh not found at $SITE_SETUP (set SITE_SETUP_SCRIPT to override)" >&2
   exit 1
 fi
 

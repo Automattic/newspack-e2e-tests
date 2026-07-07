@@ -6,7 +6,7 @@
 
 ### Local setup & testing
 
-Will need a local test site – set it up with [`newspack-docker`](https://github.com/Automattic/newspack-docker) by running `n sites-add e2e`. This will create a local `https://e2e.local` site. The site must have `newspack-manager` installed (it carries the `site-setup.sh` provisioning script) and, for the `@with-woo` tests, the WooCommerce stack (`woocommerce`, `woocommerce-subscriptions`, `woocommerce-memberships`, `woocommerce-name-your-price`).
+Will need a local test site – set it up with [`newspack-docker`](https://github.com/Automattic/newspack-docker) by running `n sites-add e2e`. This will create a local `https://e2e.local` site. The provisioning script (`site-setup.sh`) ships in this repo, but the site must have the Newspack plugins the suite activates installed (`newspack-plugin`, `newspack-blocks`, `newspack-popups`, `newspack-ads`, `newspack-newsletters`, `newspack-manager`) and, for the `@with-woo` tests, the WooCommerce stack (`woocommerce`, `woocommerce-subscriptions`, `woocommerce-gateway-stripe`, `woocommerce-memberships`, `woocommerce-name-your-price`).
 
 1. One-time setup (unless the files mentioned below are updated)
    - create an `.env` file (see `.env-sample`).
@@ -55,9 +55,11 @@ Newspack site for the `@vanilla` tests, then the same site re-provisioned **with
 WooCommerce** for the `@with-woo` tests. Because the site is rebuilt against the
 currently installed plugin code every run, there is no fixture to drift out of date.
 
-The provisioning entry point is `e2e-setup.sh`, which wraps newspack-manager's
-`scripts/site-setup.sh`; `setupSite` (`tests/site-setup.ts`) runs it against the
-target (local `docker exec`, or SSH on CI). See `AGENTS.md` for the full model.
+The provisioning entry point is `e2e-setup.sh`, which runs the generic
+`site-setup.sh` bootstrap (both ship in this repo) and layers e2e-specific config.
+`setupSite` (`tests/site-setup.ts`) copies `site-setup.sh` onto the target and runs
+`e2e-setup.sh` against it (local `docker exec`, or SSH on CI). See `AGENTS.md` for
+the full model.
 
 Because both states run in one pass, the tests run in a fixed order. The
 dependency chain in `playwright.config.ts` is a bit involved, but the order is:
@@ -112,11 +114,14 @@ underlying `site-setup.sh`) create it, so it's rebuilt on every run.
 
 ## Provisioning the test site manually
 
-`e2e-setup.sh` can be run by hand against a site that has `newspack-manager`
-installed. Inside the local Docker container:
+`e2e-setup.sh` and `site-setup.sh` can be run by hand. Copy both into the site's
+WordPress root (they must sit together so `e2e-setup.sh` finds `site-setup.sh`
+next to it), then, inside the local Docker container:
 ```
-docker exec -i <container> bash -s -- --woo --allow-root --url <site-url> \
-  --admin-user admin --admin-password password < e2e-setup.sh
+docker cp site-setup.sh <container>:/var/www/html/
+docker cp e2e-setup.sh  <container>:/var/www/html/
+docker exec -i <container> bash /var/www/html/e2e-setup.sh --woo --allow-root \
+  --url <site-url> --admin-user admin --admin-password password
 ```
 Use `--no-woo` for the vanilla state. For the Stripe gateway (needed by
 `@with-woo` checkout tests such as `donations.spec.ts`) provide the test keys via

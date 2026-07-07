@@ -31,15 +31,18 @@ The suite provisions the site from scratch each phase rather than restoring a DB
 dump. This keeps it drift-free: the site is always rebuilt against the currently
 installed plugin code, so a plugin/core update can't leave a stale fixture behind.
 
-- **`e2e-setup.sh`** (this repo) is the entry point. It wraps newspack-manager's
-  general `scripts/site-setup.sh` (the from-scratch Newspack bootstrap: DB reset +
+- **`site-setup.sh`** (this repo) is the from-scratch Newspack bootstrap (DB reset +
   fresh install + posts/users/WooCommerce+donations/memberships/subscriptions/
-  campaigns/menus) and then layers the e2e-specific config the general script
-  deliberately omits: the `NEWSPACK_IS_E2E` flag, the `e2e-plugin`, the extra
-  Newspack plugins the suite drives (ads/newsletters/manager), Stripe test keys,
-  editor preferences, timezone, etc. `--woo` / `--no-woo` selects the WooCommerce stack.
+  campaigns/menus). It's a generic dev provisioner, parameterised by `--url`,
+  `--admin-*`, `--allow-root`, `--reset`, and the `--no-*` toggles.
+- **`e2e-setup.sh`** (this repo) is the entry point. It runs `site-setup.sh` and then
+  layers the e2e-specific config that script deliberately omits: the `NEWSPACK_IS_E2E`
+  flag, the `e2e-plugin`, the extra Newspack plugins the suite drives
+  (ads/newsletters/manager), Stripe test keys, editor preferences, timezone, etc.
+  `--woo` / `--no-woo` selects the WooCommerce stack.
 - **`tests/site-setup.ts`** (`setupSite`) is how the Playwright setup projects run
-  it: it streams `e2e-setup.sh` to the target over stdin. Locally it `docker exec`s
+  it: it copies `site-setup.sh` onto the target and streams `e2e-setup.sh` (which
+  points at the copy via `SITE_SETUP_SCRIPT`). Locally it `docker cp` + `docker exec`s
   into the env container (as root, `--allow-root`, full `wp db reset`); on CI it
   SSHes to the host (no `--allow-root`, `--reset clean` since a managed host can't
   `DROP DATABASE`). Local vs remote is decided from the `SITE_URL` host.
@@ -48,8 +51,9 @@ installed plugin code, so a plugin/core update can't leave a stale fixture behin
   admin login, there is no separate captured password to keep in sync. `.env`'s
   `ADMIN_PASSWORD=password` is for the local env; staging's lives in the a8c secret
   store (README → `secret_id=12168`).
-- **`newspack-manager` must be installed** on the target (it carries
-  `scripts/site-setup.sh`), along with the WooCommerce stack for the `--woo` path.
+- **On-site prerequisites**: the WooCommerce stack for the `--woo` path, and the
+  `e2e-plugin` + the Newspack plugins the suite activates (incl. `newspack-manager`)
+  must be installed. `site-setup.sh` itself is shipped from this repo, not the site.
 
 ## CI (TeamCity) notes
 

@@ -15,6 +15,10 @@ type SetupOptions = {
 };
 
 const SCRIPT_PATH = resolve(__dirname, "..", "e2e-setup.sh");
+// site-setup.sh ships in this repo (dev-only tooling); we copy it onto the target
+// and point e2e-setup.sh at it via SITE_SETUP_SCRIPT.
+const SITE_SETUP_PATH = resolve(__dirname, "..", "site-setup.sh");
+const REMOTE_SITE_SETUP = "/tmp/e2e-site-setup.sh";
 
 // A site is "local" when it lives in a Docker env we can `docker exec` into:
 // *.local / *.test hosts and loopback addresses. Everything else is remote (SSH).
@@ -67,24 +71,34 @@ export const setupSite = ({ woo }: SetupOptions): void => {
   const siteUrl = process.env.SITE_URL as string;
 
   const script = readFileSync(SCRIPT_PATH);
+  const siteSetup = readFileSync(SITE_SETUP_PATH);
   const args = scriptArgs(woo);
-  // Forward Stripe test keys (if present) into the remote environment.
+  // Forward Stripe test keys (if present) into the target environment.
   const stripeEnv = ["STRIPE_PUB_KEY", "STRIPE_SECRET_KEY"];
 
   if (isLocalTarget(siteUrl)) {
     const container = containerForHost(siteUrl);
+    // Copy site-setup.sh into the container, then run e2e-setup.sh (piped) pointing
+    // at it. Local Docker runs as root, so the script needs --allow-root and can do
+    // a full DROP/CREATE-DATABASE reset.
+    execFileSync("docker", ["cp", SITE_SETUP_PATH, `${container}:${REMOTE_SITE_SETUP}`], {
+      stdio: ["ignore", "inherit", "inherit"],
+    });
     const envForwards = stripeEnv.flatMap((v) => (process.env[v] ? ["-e", v] : []));
-    // Local Docker runs as root, so the script needs --allow-root and can do a
-    // full DROP/CREATE-DATABASE reset.
     execFileSync(
       "docker",
-      ["exec", "-i", ...envForwards, container, "bash", "-s", "--", ...args, "--allow-root", "--reset", "full"],
+      [
+        "exec", "-i",
+        "-e", `SITE_SETUP_SCRIPT=${REMOTE_SITE_SETUP}`,
+        ...envForwards,
+        container, "bash", "-s", "--", ...args, "--allow-root", "--reset", "full",
+      ],
       { input: script, stdio: ["pipe", "inherit", "inherit"] }
     );
     return;
   }
 
-  // Remote (CI / Atomic): SSH in and pipe the script. No --allow-root on a managed
+  // Remote (CI / Atomic): SSH in and pipe the scripts. No --allow-root on a managed
   // host, and a `clean` reset (drop tables, keep the DB) since we can't DROP DATABASE.
   const host = process.env.E2E_SSH_HOST;
   const user = process.env.E2E_SSH_USER;
@@ -96,27 +110,34 @@ export const setupSite = ({ woo }: SetupOptions): void => {
     );
   }
 
-  const inlineEnv = stripeEnv
-    .filter((v) => process.env[v])
-    .map((v) => `${v}=${shQuote(process.env[v] as string)}`)
-    .join(" ");
+  // Run one SSH command, piping `input` to it. Uses sshpass for password auth.
+  const runSsh = (remoteCommand: string, input: Buffer): void => {
+    const sshArgs = ["-o", "StrictHostKeyChecking=no", `${user}@${host}`, remoteCommand];
+    const [cmd, cmdArgs] = pass ? ["sshpass", ["-p", pass, "ssh", ...sshArgs]] : ["ssh", sshArgs];
+    try {
+      execFileSync(cmd, cmdArgs, { input, stdio: ["pipe", "inherit", "inherit"] });
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code === "ENOENT" && cmd === "sshpass") {
+        throw new Error(
+          "sshpass is required for E2E_SSH_PASS auth but was not found on PATH. Install sshpass, or use key-based SSH (unset E2E_SSH_PASS)."
+        );
+      }
+      throw err;
+    }
+  };
+
+  // 1. Ship site-setup.sh onto the target.
+  runSsh(`cat > ${shQuote(REMOTE_SITE_SETUP)}`, siteSetup);
+
+  // 2. Run e2e-setup.sh (piped), pointing it at the copy and forwarding Stripe keys.
+  const inlineEnv = [
+    `SITE_SETUP_SCRIPT=${shQuote(REMOTE_SITE_SETUP)}`,
+    ...stripeEnv
+      .filter((v) => process.env[v])
+      .map((v) => `${v}=${shQuote(process.env[v] as string)}`),
+  ].join(" ");
   const remoteCmd = `cd ${shQuote(wpPath)} && ${inlineEnv} bash -s -- ${args
     .map(shQuote)
     .join(" ")} --reset clean`;
-
-  const sshArgs = ["-o", "StrictHostKeyChecking=no", `${user}@${host}`, remoteCmd];
-  const [cmd, cmdArgs] = pass
-    ? // Password auth via sshpass (the CI credential model).
-      ["sshpass", ["-p", pass, "ssh", ...sshArgs]]
-    : ["ssh", sshArgs];
-  try {
-    execFileSync(cmd, cmdArgs, { input: script, stdio: ["pipe", "inherit", "inherit"] });
-  } catch (err) {
-    if ((err as NodeJS.ErrnoException).code === "ENOENT" && cmd === "sshpass") {
-      throw new Error(
-        "sshpass is required for E2E_SSH_PASS auth but was not found on PATH. Install sshpass, or use key-based SSH (unset E2E_SSH_PASS)."
-      );
-    }
-    throw err;
-  }
+  runSsh(remoteCmd, script);
 };
