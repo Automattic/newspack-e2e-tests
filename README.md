@@ -37,7 +37,10 @@ The build is parameterised by these variables (set in TeamCity, not committed):
 2. `E2E_SSH_HOST`, `E2E_SSH_USER`, `E2E_SSH_PASS` – SSH access to the site, read by
    `setupSite` (`tests/site-setup.ts`) to run the provisioning script remotely.
    Optionally `E2E_REMOTE_WP_PATH` (defaults to `htdocs`).
-3. Set up payments – see the "Payments" section below.
+3. `STRIPE_PUB_KEY`, `STRIPE_SECRET_KEY` – Stripe test-mode keys (TeamCity env
+   variables). `setupSite` forwards them to the remote provisioning, which applies
+   them to the WooCommerce Stripe gateway so the `@with-woo` donation test can
+   complete. See also the "Payments" section below.
 
 ### Payments
 
